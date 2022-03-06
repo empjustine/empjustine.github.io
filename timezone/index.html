@@ -15,9 +15,20 @@
       td, th {
         border: 1px solid;
       }
+      td {
+        text-shadow: 0 0 1px white, 0 0 1px white, 0 0 1px white, 0 0 1px white;
+      }
     /*]]>*/</style>
   </head>
   <body>
+    <p>Parameters</p>
+    <dl>
+      <dt>startTime</dt>
+      <dd id="startTime">UNKNOWN_START_TIME</dd>
+    </dl>
+    <dl id="intervals">
+      <dt>interval</dt>
+    </dl>
     <table>
       <thead>
         <tr>
@@ -26,54 +37,120 @@
       </thead>
       <tbody>
         <tr>
-          <th scope="row"><details><summary>Pacific/Auckland</summary>The time zone for Wellington, New Zealand.</details></th>
+          <th scope="row"><details><summary>Pacific/Auckland</summary>New Zealand Standard Time/New Zealand Daylight Time<br />Wellington, New Zealand<br /></details></th>
         </tr>
         <tr>
-          <th scope="row"><details><summary>Etc/UTC</summary>Coordinated Universal Time<br />Server Time.</details></th>
+          <th scope="row"><details><summary>Australia/Melbourne</summary>Australian Eastern Standard Time/Australian Eastern Daylight Time<br />Victoria, Australia <br /></details></th>
         </tr>
         <tr>
-          <th scope="row"><details><summary>America/Sao_Paulo</summary>The time zone for Brasilia, Brazil.<br />America/Araguaina, America/Bahia, America/Belem, America/Fortaleza, America/Maceio, America/Recife, America/Santarem</details></th>
+          <th scope="row"><details><summary>Europe/London</summary>Greenwich Mean Time/British Summer Time<br />Edinburgh, United Kingdom<br /></details></th>
         </tr>
         <tr>
-          <th scope="row"><details><summary>America/New_York</summary>Eastern United States of America Time<br />The time zone for New York, United States.<br />America/Detroit, America/Indiana/Indianapolis, America/Indiana/Marengo, America/Indiana/Petersburg, America/Indiana/Vevay, America/Indiana/Vincennes, America/Indiana/Winamac, America/Kentucky/Louisville, America/Kentucky/Monticello</details></th>
+          <th scope="row"><details><summary>Etc/UTC</summary>Coordinated Universal Time<br />Coordinated Universal Time<br /></details></th>
         </tr>
         <tr>
-          <th scope="row"><details><summary>America/Chicago</summary>Central United States of America Time<br />The time zone for Chicago, United States.<br />America/Indiana/Knox, America/Indiana/Tell_City, America/Menominee, America/North_Dakota/Beulah, America/North_Dakota/Center, America/North_Dakota/New_Salem</details></th>
+          <th scope="row"><details><summary>America/Sao_Paulo</summary>Brasília time<br />Brasilia, Brazil<br />America/Araguaina, America/Bahia, America/Belem, America/Fortaleza, America/Maceio, America/Recife, America/Santarem</details></th>
         </tr>
         <tr>
-          <th scope="row"><details><summary>America/Denver</summary>Mountain United States of America Time<br />The time zone for Denver, United States.<br />America/Boise</details></th>
+          <th scope="row"><details><summary>America/New_York</summary>Eastern Daylight Time of the United States of America/Eastern Standard Time of the United States of America<br />New York, United States<br />America/Detroit, America/Indiana/Indianapolis, America/Indiana/Marengo, America/Indiana/Petersburg, America/Indiana/Vevay, America/Indiana/Vincennes, America/Indiana/Winamac, America/Kentucky/Louisville, America/Kentucky/Monticello</details></th>
         </tr>
         <tr>
-          <th scope="row"><details><summary>America/Los_Angeles</summary>Pacific United States of America Time<br />The time zone for Los Angeles, United States.<br /></details></th>
+          <th scope="row"><details><summary>America/Chicago</summary>Central Daylight Time of the United States of America/Central Standard Time of the United States of America<br />Chicago, United States<br />America/Indiana/Knox, America/Indiana/Tell_City, America/Menominee, America/North_Dakota/Beulah, America/North_Dakota/Center, America/North_Dakota/New_Salem</details></th>
+        </tr>
+        <tr>
+          <th scope="row"><details><summary>America/Denver</summary>Mountain Daylight Time of the United States of America/Mountain Standard Time of the United States of America<br />Denver, United States<br />America/Boise</details></th>
+        </tr>
+        <tr>
+          <th scope="row"><details><summary>America/Los_Angeles</summary>Pacific Daylight Time of the United States of America/Pacific Standard Time of the United States of America<br />Los Angeles, United States<br /></details></th>
         </tr>
       </tbody>
     </table>
     <p>Local browser believes it is in:</p>
     <dl>
       <dt><a href="https://www.iana.org/time-zones">IANA Time Zone Database</a> time zone</dt>
-      <dd id="timezone">UNKNOWN_TIMEZONE</dd>
+      <dd id="currentIanaTimezone">UNKNOWN_TIMEZONE</dd>
+    </dl>
+    <dl>
       <dt>Current Time</dt>
-      <dd id="time_now">UNKNOWN_TIME_NOW</dd>
+      <dd id="currentTime">UNKNOWN_TIME_NOW</dd>
     </dl>
     <script type="module">//<![CDATA[
-      document.querySelector('dd#timezone').innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      document.querySelector('dd#time_now').innerText = new Date().toISOString();
+      document.querySelector('dd#currentIanaTimezone').innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      document.querySelector('dd#currentTime').innerText = new Date().toISOString();
     //]]></script>
     <script type="module">//<![CDATA[
-      import { DateTime, Interval } from 'https://cdn.skypack.dev/pin/luxon@v2.3.0-NfI5UpKDVoBRijPyPIBX/mode=imports/optimized/luxon.js';
-      import { select } from 'https://cdn.skypack.dev/pin/d3-selection@v3.0.0-sAmQ3giCT8irML5wz1T1/mode=imports/optimized/d3-selection.js';
-      const startTimeRaw = new URL(window.location).searchParams.get('startTime');
-      const intervals = new URL(window.location).searchParams.getAll('interval').map(i => Interval.fromISO(i));
-      const startTime = startTimeRaw ? DateTime.fromISO(startTimeRaw) : DateTime.now();
-      const offsets = [...Array(24).keys()];
-      for (const timezoneNode of document.querySelectorAll('tbody tr th details summary')) {
-        // Update…
-        const td = select(timezoneNode.parentNode.parentNode.parentNode).selectAll('td').data(offsets).text(offset => startTime.plus({hours: offset}).setZone(timezoneNode.innerText).toFormat('HH'));
-        // Enter…
-        td.enter().append("td").text(offset => startTime.plus({hours: offset}).setZone(timezoneNode.innerText).toFormat('HH'));
-        // Exit…
-        td.exit().remove();
-      }
+import {
+  DateTime,
+  Interval,
+} from "https://cdn.skypack.dev/pin/luxon@v2.3.0-NfI5UpKDVoBRijPyPIBX/mode=imports/optimized/luxon.js";
+import { select } from "https://cdn.skypack.dev/pin/d3-selection@v3.0.0-sAmQ3giCT8irML5wz1T1/mode=imports/optimized/d3-selection.js";
+import { interpolateCividis } from "https://cdn.skypack.dev/pin/d3-scale-chromatic@v3.0.0-wlyjJbUexgtDqhQ6ksVy/mode=imports/optimized/d3-scale-chromatic.js";
+const startTimeRaw = new URL(window.location).searchParams.get("startTime");
+const startTime = startTimeRaw
+  ? DateTime.fromISO(startTimeRaw)
+  : DateTime.now();
+document.querySelector("dd#startTime").innerText = startTime.toISO();
+const offsets = [-1, ...Array(26).keys()];
+for (const timezoneNode of document.querySelectorAll(
+  "tbody tr th details summary"
+)) {
+  // Update…
+  const td = select(timezoneNode.parentNode.parentNode.parentNode)
+    .selectAll("td")
+    .data(offsets)
+    .style("background", (offset) =>
+      interpolateCividis(
+        Math.sin(
+          (startTime.plus({ hours: offset }).setZone(timezoneNode.innerText)
+            .hour *
+            Math.PI) /
+            24
+        )
+      )
+    )
+    .text((offset) =>
+      startTime
+        .plus({ hours: offset })
+        .setZone(timezoneNode.innerText)
+        .toFormat("HH")
+    );
+  // Enter…
+  td.enter()
+    .append("td")
+    .style("background", (offset) =>
+      interpolateCividis(
+        Math.sin(
+          (startTime.plus({ hours: offset }).setZone(timezoneNode.innerText)
+            .hour *
+            Math.PI) /
+            24
+        )
+      )
+    )
+    .text((offset) =>
+      startTime
+        .plus({ hours: offset })
+        .setZone(timezoneNode.innerText)
+        .toFormat("HH")
+    );
+  // Exit…
+  td.exit().remove();
+}
+
+const intervals = new URL(window.location).searchParams
+  .getAll("interval")
+  .map((i) => Interval.fromISO(i));
+// Update…
+const dd = select("dl#intervals")
+  .selectAll("dd")
+  .data(intervals)
+  .text((interval) => interval);
+// Enter…
+dd.enter()
+  .append("dd")
+  .text((interval) => interval);
+// Exit…
+dd.exit().remove();
     //]]></script>
   </body>
 </html>
