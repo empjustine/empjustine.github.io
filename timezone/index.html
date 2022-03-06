@@ -8,6 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <style>/*<![CDATA[*/
+      td, th {
+        border: 1px solid;
+        font-family: 'Source Code Pro', monospace;
+      }
+    /*]]>*/</style>
   </head>
   <body>
     <table>
@@ -19,55 +25,39 @@
       </thead>
       <tbody>
         <tr>
-          <th scope="row">Pacific/Auckland</th>
-          <!--<td></td>-->
+          <th scope="row"><details><summary>Pacific/Auckland</summary>The time zone for Wellington, New Zealand.</details></th>
         </tr>
         <tr>
-          <th scope="row">Etc/UTC</th>
-          <!--<td></td>-->
+          <th scope="row"><details><summary>Etc/UTC</summary>Coordinated Universal Time<br />Server Time.</details></th>
         </tr>
         <tr>
-          <th scope="row">America/Sao_Paulo</th>
-          <!--<td>America/Araguaina, America/Bahia, America/Belem, America/Fortaleza, America/Maceio, America/Recife, America/Santarem</td>-->
+          <th scope="row"><details><summary>America/Sao_Paulo</summary>The time zone for Brasilia, Brazil.<br />America/Araguaina, America/Bahia, America/Belem, America/Fortaleza, America/Maceio, America/Recife, America/Santarem</details></th>
         </tr>
         <tr>
-          <th scope="row">America/Detroit</th>
-          <!--<td>America/Indiana/Indianapolis, America/Indiana/Marengo, America/Indiana/Petersburg, America/Indiana/Vevay, America/Indiana/Vincennes, America/Indiana/Winamac, America/Kentucky/Louisville, America/Kentucky/Monticello, America/New_York</td>-->
+          <th scope="row"><details><summary>America/New_York</summary>Eastern United States of America Time<br />The time zone for New York, United States.<br />America/Detroit, America/Indiana/Indianapolis, America/Indiana/Marengo, America/Indiana/Petersburg, America/Indiana/Vevay, America/Indiana/Vincennes, America/Indiana/Winamac, America/Kentucky/Louisville, America/Kentucky/Monticello</details></th>
         </tr>
         <tr>
-          <th scope="row">America/Chicago</th>
-          <!--<td>America/Indiana/Knox, America/Indiana/Tell_City, America/Menominee, America/North_Dakota/Beulah, America/North_Dakota/Center, America/North_Dakota/New_Salem</td>-->
+          <th scope="row"><details><summary>America/Chicago</summary>Central United States of America Time<br />The time zone for Chicago, United States.<br />America/Indiana/Knox, America/Indiana/Tell_City, America/Menominee, America/North_Dakota/Beulah, America/North_Dakota/Center, America/North_Dakota/New_Salem</details></th>
         </tr>
         <tr>
-          <th scope="row">America/Denver</th>
-          <!--<td>America/Boise</td>-->
+          <th scope="row"><details><summary>America/Denver</summary>Mountain United States of America Time<br />The time zone for Denver, United States.<br />America/Boise</details></th>
         </tr>
         <tr>
-          <th scope="row">America/Los_Angeles</th>
-          <!--<td></td>-->
+          <th scope="row"><details><summary>America/Los_Angeles</summary>Pacific United States of America Time<br />The time zone for Los Angeles, United States.<br /></details></th>
         </tr>
       </tbody>
     </table>
-    <style>/*<![CDATA[*/
-      td, th {
-        border: 1px solid;
-        font-family: 'Source Code Pro', monospace;
-      }
-    /*]]>*/</style>
     <script type="module">//<![CDATA[
       import { DateTime } from 'https://cdn.skypack.dev/pin/luxon@v2.3.0-NfI5UpKDVoBRijPyPIBX/mode=imports/optimized/luxon.js';
       import { select } from 'https://cdn.skypack.dev/pin/d3-selection@v3.0.0-sAmQ3giCT8irML5wz1T1/mode=imports/optimized/d3-selection.js';
-      const now = DateTime.now();
+      const startTimeRaw = new URL(window.location).searchParams.get('startTime');
+      const startTime = startTimeRaw ? DateTime.fromISO(startTimeRaw) : DateTime.now();
       const offsets = [...Array(24).keys()];
-      const timezoneNodes = [...document.querySelectorAll('tbody tr th')];
-      for (const timezoneNode of timezoneNodes) {
-        const tr = timezoneNode.parentNode;
-        const zone = now.setZone(timezoneNode.innerText);
-        console.log(tr, zone);
+      for (const timezoneNode of document.querySelectorAll('tbody tr th details summary')) {
         // Update…
-        const td = select(tr).selectAll('td').data(offsets).text(offset => zone.plus({hours: offset}).toFormat('HH'));
+        const td = select(timezoneNode.parentNode.parentNode.parentNode).selectAll('td').data(offsets).text(offset => startTime.plus({hours: offset}).setZone(timezoneNode.innerText).toFormat('HH'));
         // Enter…
-        td.enter().append("td").text(offset => zone.plus({hours: offset}).toFormat('HH'));
+        td.enter().append("td").text(offset => startTime.plus({hours: offset}).setZone(timezoneNode.innerText).toFormat('HH'));
         // Exit…
         td.exit().remove();
       }
