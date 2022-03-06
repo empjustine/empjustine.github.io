@@ -9,9 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
     <style>/*<![CDATA[*/
+      * {
+        font-family: 'Source Code Pro', monospace;
+      }
       td, th {
         border: 1px solid;
-        font-family: 'Source Code Pro', monospace;
       }
     /*]]>*/</style>
   </head>
@@ -20,7 +22,6 @@
       <thead>
         <tr>
           <th scope="column">Timezone</th>
-          <!--<td></td>-->
         </tr>
       </thead>
       <tbody>
@@ -47,10 +48,22 @@
         </tr>
       </tbody>
     </table>
+    <p>Local browser believes it is in:</p>
+    <dl>
+      <dt><a href="https://www.iana.org/time-zones">IANA Time Zone Database</a> time zone</dt>
+      <dd id="timezone">UNKNOWN_TIMEZONE</dd>
+      <dt>Current Time</dt>
+      <dd id="time_now">UNKNOWN_TIME_NOW</dd>
+    </dl>
     <script type="module">//<![CDATA[
-      import { DateTime } from 'https://cdn.skypack.dev/pin/luxon@v2.3.0-NfI5UpKDVoBRijPyPIBX/mode=imports/optimized/luxon.js';
+      document.querySelector('dd#timezone').innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      document.querySelector('dd#time_now').innerText = new Date().toISOString();
+    //]]></script>
+    <script type="module">//<![CDATA[
+      import { DateTime, Interval } from 'https://cdn.skypack.dev/pin/luxon@v2.3.0-NfI5UpKDVoBRijPyPIBX/mode=imports/optimized/luxon.js';
       import { select } from 'https://cdn.skypack.dev/pin/d3-selection@v3.0.0-sAmQ3giCT8irML5wz1T1/mode=imports/optimized/d3-selection.js';
       const startTimeRaw = new URL(window.location).searchParams.get('startTime');
+      const intervals = new URL(window.location).searchParams.getAll('interval').map(i => Interval.fromISO(i));
       const startTime = startTimeRaw ? DateTime.fromISO(startTimeRaw) : DateTime.now();
       const offsets = [...Array(24).keys()];
       for (const timezoneNode of document.querySelectorAll('tbody tr th details summary')) {
