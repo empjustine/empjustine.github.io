@@ -55,18 +55,17 @@
       }
     /*]]>*/</style>
     <script type="module">//<![CDATA[
-      import * as luxon from "https://unpkg.com/luxon@2.3.1/src/luxon.js?module";
-      import * as d3 from "https://unpkg.com/d3@7.3.0/src/index.js?module";
-      const now = luxon.DateTime.now();
+      import { DateTime } from 'https://cdn.skypack.dev/pin/luxon@v2.3.0-NfI5UpKDVoBRijPyPIBX/mode=imports/optimized/luxon.js';
+      import { select } from 'https://cdn.skypack.dev/pin/d3-selection@v3.0.0-sAmQ3giCT8irML5wz1T1/mode=imports/optimized/d3-selection.js';
+      const now = DateTime.now();
       const offsets = [...Array(24).keys()];
       const timezoneNodes = [...document.querySelectorAll('tbody tr th')];
-      const table = timezoneNodes.map;
       for (const timezoneNode of timezoneNodes) {
         const tr = timezoneNode.parentNode;
         const zone = now.setZone(timezoneNode.innerText);
         console.log(tr, zone);
         // Update…
-        const td = d3.select(tr).selectAll('td').data(offsets).text(offset => zone.plus({hours: offset}).toFormat('HH'));
+        const td = select(tr).selectAll('td').data(offsets).text(offset => zone.plus({hours: offset}).toFormat('HH'));
         // Enter…
         td.enter().append("td").text(offset => zone.plus({hours: offset}).toFormat('HH'));
         // Exit…
