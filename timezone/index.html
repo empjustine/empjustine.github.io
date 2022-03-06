@@ -1,23 +1,27 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en-US">
   <head>
     <meta charset="utf-8" />
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>/*<![CDATA[*/
-      * {
-        font-family: 'Source Code Pro', monospace;
-      }
-      td, th {
-        border: 1px solid;
-      }
-      td {
-        text-shadow: 0 0 1px white, 0 0 1px white, 0 0 1px white, 0 0 1px white;
-      }
+* {
+  font-family: "Source Code Pro", monospace;
+}
+td,
+th {
+  border: 1px solid;
+}
+td {
+  text-shadow: 0 0 1px white, 0 0 1px white, 0 0 1px white, 0 0 1px white;
+}
     /*]]>*/</style>
   </head>
   <body>
@@ -91,29 +95,16 @@ const startTime = startTimeRaw
   : DateTime.now();
 document.querySelector("dd#startTime").innerText = startTime.toISO();
 const offsets = [-1, ...Array(26).keys()];
+const intervals = new URL(window.location).searchParams
+  .getAll("interval")
+  .map((i) => Interval.fromISO(i));
 for (const timezoneNode of document.querySelectorAll(
   "tbody tr th details summary"
 )) {
   // Update…
   const td = select(timezoneNode.parentNode.parentNode.parentNode)
     .selectAll("td")
-    .data(offsets)
-    .style("background", (offset) =>
-      interpolateCividis(
-        Math.sin(
-          (startTime.plus({ hours: offset }).setZone(timezoneNode.innerText)
-            .hour *
-            Math.PI) /
-            24
-        )
-      )
-    )
-    .text((offset) =>
-      startTime
-        .plus({ hours: offset })
-        .setZone(timezoneNode.innerText)
-        .toFormat("HH")
-    );
+    .data(offsets);
   // Enter…
   td.enter()
     .append("td")
@@ -127,6 +118,13 @@ for (const timezoneNode of document.querySelectorAll(
         )
       )
     )
+    .style("font-weight", (offset) =>
+      intervals.some((interval) =>
+        interval.contains(startTime.plus({ hours: offset }))
+      )
+        ? 700
+        : 400
+    )
     .text((offset) =>
       startTime
         .plus({ hours: offset })
@@ -137,14 +135,8 @@ for (const timezoneNode of document.querySelectorAll(
   td.exit().remove();
 }
 
-const intervals = new URL(window.location).searchParams
-  .getAll("interval")
-  .map((i) => Interval.fromISO(i));
 // Update…
-const dd = select("dl#intervals")
-  .selectAll("dd")
-  .data(intervals)
-  .text((interval) => interval);
+const dd = select("dl#intervals").selectAll("dd").data(intervals);
 // Enter…
 dd.enter()
   .append("dd")
