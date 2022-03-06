@@ -5,9 +5,73 @@
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="mobile-web-app-capable" content="yes">
-    <link href="https://github.com/empjustine" rel="me">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
   </head>
   <body>
-    <input type="range" min="0" max="100" value="50" step="1" style="width: 98vw" />
+    <table>
+      <thead>
+        <tr>
+          <th scope="column">Timezone</th>
+          <!--<td></td>-->
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Pacific/Auckland</th>
+          <!--<td></td>-->
+        </tr>
+        <tr>
+          <th scope="row">Etc/UTC</th>
+          <!--<td></td>-->
+        </tr>
+        <tr>
+          <th scope="row">America/Sao_Paulo</th>
+          <!--<td>America/Araguaina, America/Bahia, America/Belem, America/Fortaleza, America/Maceio, America/Recife, America/Santarem</td>-->
+        </tr>
+        <tr>
+          <th scope="row">America/Detroit</th>
+          <!--<td>America/Indiana/Indianapolis, America/Indiana/Marengo, America/Indiana/Petersburg, America/Indiana/Vevay, America/Indiana/Vincennes, America/Indiana/Winamac, America/Kentucky/Louisville, America/Kentucky/Monticello, America/New_York</td>-->
+        </tr>
+        <tr>
+          <th scope="row">America/Chicago</th>
+          <!--<td>America/Indiana/Knox, America/Indiana/Tell_City, America/Menominee, America/North_Dakota/Beulah, America/North_Dakota/Center, America/North_Dakota/New_Salem</td>-->
+        </tr>
+        <tr>
+          <th scope="row">America/Denver</th>
+          <!--<td>America/Boise</td>-->
+        </tr>
+        <tr>
+          <th scope="row">America/Los_Angeles</th>
+          <!--<td></td>-->
+        </tr>
+      </tbody>
+    </table>
+    <style>/*<![CDATA[*/
+      td, th {
+        border: 1px solid;
+        font-family: 'Source Code Pro', monospace;
+      }
+    /*]]>*/</style>
+    <script type="module">//<![CDATA[
+      import * as luxon from "https://unpkg.com/luxon@2.3.1/src/luxon.js?module";
+      import * as d3 from "https://unpkg.com/d3@7.3.0/src/index.js?module";
+      const now = luxon.DateTime.now();
+      const offsets = [...Array(24).keys()];
+      const timezoneNodes = [...document.querySelectorAll('tbody tr th')];
+      const table = timezoneNodes.map;
+      for (const timezoneNode of timezoneNodes) {
+        const tr = timezoneNode.parentNode;
+        const zone = now.setZone(timezoneNode.innerText);
+        console.log(tr, zone);
+        // Update…
+        const td = d3.select(tr).selectAll('td').data(offsets).text(offset => zone.plus({hours: offset}).toFormat('HH'));
+        // Enter…
+        td.enter().append("td").text(offset => zone.plus({hours: offset}).toFormat('HH'));
+        // Exit…
+        td.exit().remove();
+      }
+    //]]></script>
   </body>
 </html>
