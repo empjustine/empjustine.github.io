@@ -140,7 +140,10 @@ for (const timezoneNode of document.querySelectorAll(
 }
 
 // Update…
-const dd = select("dl#intervals").selectAll("dd").data(intervals);
+const dd = select("dl#intervals")
+  .selectAll("dd")
+  .data(intervals)
+  .text((interval) => interval);
 // Enter…
 dd.enter()
   .append("dd")
