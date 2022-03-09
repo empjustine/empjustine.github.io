@@ -85,6 +85,7 @@ td {
       <dt>Current Time</dt>
       <dd id="currentTime">UNKNOWN_TIME_NOW</dd>
     </dl>
+    <p><a href="https://timezonefinder.michelfe.it/gui/0_-46.633956_-23.550385">Map with nearest timezones</p>
     <script type="module">//<![CDATA[
       document.querySelector('dd#currentIanaTimezone').innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
       document.querySelector('dd#currentTime').innerText = new Date().toISOString();
