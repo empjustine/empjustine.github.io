@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+    <title>Graphql Toolbox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/css">/*<![CDATA[*/
+body {
+  margin: 0;
+}
+textarea {
+  width: 99.99%;
+  resize: vertical;
+}
+    /*]]>*/</style>
+  </head>
+  <body>
+    <div class="grid">
+  <textarea class="before"># query here</textarea>
+  <pre><code class="after"></code></pre>
+  <textarea class="introspectionResult"></textarea>
+  <pre><code class="graphQLSchema"></code></pre>
+</div>
+
+<script type="module">
+  
+</script>
+    <script type="module">//<![CDATA[
+import gqlmin from 'https://cdn.skypack.dev/gqlmin';
+import { getIntrospectionQuery, buildClientSchema, printSchema } from "https://cdn.skypack.dev/graphql";
+
+const input = document.querySelector('textarea.before');
+const output = document.querySelector('pre code.after');
+
+function format() {
+	const min = gqlmin(input.value);
+	output.innerText = min;
+}
+
+input.addEventListener('change', format);
+input.addEventListener('keyup', format);
+
+input.value = getIntrospectionQuery();
+format();
+
+const input2 = document.querySelector('textarea.introspectionResult');
+const output2 = document.querySelector('pre code.graphQLSchema');
+
+function format2() {
+	const rawShema = JSON.parse(input2.value);
+        const clientSchema = buildClientSchema(rawShema.data);
+        const schemaString = printSchema(clientSchema);
+	output2.innerText = schemaString;
+}
+
+input2.addEventListener('change', format2);
+input2.addEventListener('keyup', format2);
+    //]]></script>
+  </body>
+</html>
