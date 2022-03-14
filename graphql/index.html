@@ -54,10 +54,14 @@ const input2 = document.querySelector('textarea.introspectionResult');
 const output2 = document.querySelector('pre code.graphQLSchema');
 
 function format2() {
-	const rawShema = JSON.parse(input2.value);
-        const clientSchema = buildClientSchema(rawShema.data);
-        const schemaString = printSchema(clientSchema);
-	output2.innerText = schemaString;
+	try {
+		const rawShema = JSON.parse(input2.value);
+		const clientSchema = buildClientSchema(rawShema.data);
+		const schemaString = printSchema(clientSchema);
+		output2.innerText = schemaString;
+	} catch (err) {
+		output2.innerText = err?.stack ?? err;
+	}
 }
 
 input2.addEventListener('change', format2);
