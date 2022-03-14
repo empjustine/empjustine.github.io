@@ -60,7 +60,7 @@ function format2() {
 		const schemaString = printSchema(clientSchema);
 		output2.innerText = schemaString;
 	} catch (err) {
-		output2.innerText = err?.stack ?? err;
+		output2.innerText = `${err?.message} ${err?.stack}` ?? err;
 	}
 }
 
