@@ -1,71 +1,132 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Graphql Toolbox</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="mobile-web-app-capable" content="yes" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&amp;display=swap"
       rel="stylesheet"
     />
-    <style type="text/css">/*<![CDATA[*/
-body {
-  margin: 0;
-}
-textarea {
-  width: 99.99%;
-  resize: vertical;
-}
-    /*]]>*/</style>
+    <style type="text/css">
+      /*<![CDATA[*/
+      body {
+        margin: 0;
+      }
+      textarea {
+        width: 99.99%;
+        resize: vertical;
+      }
+      /*]]>*/
+    </style>
   </head>
   <body>
     <div class="grid">
-  <textarea class="before"># query here</textarea>
-  <pre><code class="after"></code></pre>
-  <textarea class="introspectionResult"></textarea>
-  <pre><code class="graphQLSchema"></code></pre>
-</div>
+      <label>
+        gqlInput:
+        <textarea name="gqlInput" id="gqlInput"></textarea>
+      </label>
+      <details open="open">
+        <summary><label for="gqlMinOutput">gqlMinOutput</label></summary>
+        <textarea
+          name="gqlMinOutput"
+          id="gqlMinOutput"
+          disabled="disabled"
+        ></textarea>
+      </details>
+      <details>
+        <summary><label for="gqlAstOutput">gqlAstOutput</label></summary>
+        <textarea
+          name="gqlAstOutput"
+          id="gqlAstOutput"
+          disabled="disabled"
+        ></textarea>
+      </details>
+      <hr />
+      <label>
+        introspectionQueryJsonResult:
+        <textarea class="introspectionQueryJsonResult"></textarea>
+      </label>
+      <details open="open">
+        <summary>
+          <label for="graphQLSchemaOutput">graphQLSchemaOutput</label>
+        </summary>
+        <textarea
+          name="graphQLSchemaOutput"
+          id="graphQLSchemaOutput"
+          disabled="disabled"
+        ></textarea>
+      </details>
+    </div>
+    <script type="module">
+      //<![CDATA[
+      import gqlmin from "https://cdn.skypack.dev/gqlmin";
+      import {
+        getIntrospectionQuery,
+        buildClientSchema,
+        printSchema,
+      } from "https://cdn.skypack.dev/graphql";
+      import { parse } from "https://cdn.skypack.dev/graphql";
 
-<script type="module">
-  
-</script>
-    <script type="module">//<![CDATA[
-import gqlmin from 'https://cdn.skypack.dev/gqlmin';
-import { getIntrospectionQuery, buildClientSchema, printSchema } from "https://cdn.skypack.dev/graphql";
+      const gqlInput = document.querySelector("textarea#gqlInput");
+      const gqlAstOutput = document.querySelector("textarea#gqlAstOutput");
+      const gqlMinOutput = document.querySelector("textarea#gqlMinOutput");
 
-const input = document.querySelector('textarea.before');
-const output = document.querySelector('pre code.after');
+      function handleGraphql() {
+        try {
+          const ast = parse(gqlInput.value, {});
+          gqlAstOutput.value = JSON.stringify(ast, null, 2);
+        } catch (err) {
+          gqlAstOutput.value = `${err?.message}\n\n${err?.stack}` ?? err;
+        }
 
-function format() {
-	const min = gqlmin(input.value);
-	output.innerText = min;
-}
+        try {
+          gqlMinOutput.value = gqlmin(gqlInput.value);
+        } catch (err) {
+          gqlMinOutput.value = `${err?.message}\n\n${err?.stack}` ?? err;
+        }
+      }
 
-input.addEventListener('change', format);
-input.addEventListener('keyup', format);
+      gqlInput.addEventListener("change", handleGraphql);
+      gqlInput.addEventListener("keyup", handleGraphql);
 
-input.value = getIntrospectionQuery();
-format();
+      gqlInput.value = getIntrospectionQuery();
+      handleGraphql();
 
-const input2 = document.querySelector('textarea.introspectionResult');
-const output2 = document.querySelector('pre code.graphQLSchema');
+      const introspectionQueryJsonResult = document.querySelector(
+        "textarea.introspectionQueryJsonResult"
+      );
+      const graphQLSchemaOutput = document.querySelector(
+        "textarea.graphQLSchemaOutput"
+      );
 
-function format2() {
-	try {
-		const rawShema = JSON.parse(input2.value);
-		const clientSchema = buildClientSchema(rawShema.data);
-		const schemaString = printSchema(clientSchema);
-		output2.innerText = schemaString;
-	} catch (err) {
-		output2.innerText = `${err?.message} ${err?.stack}` ?? err;
-	}
-}
+      function jsonSchemaToGraphqlSchema() {
+        try {
+          const rawShema = JSON.parse(introspectionQueryJsonResult.value);
+          const clientSchema = buildClientSchema(rawShema.data);
+          const schemaString = printSchema(clientSchema);
+          graphQLSchemaOutput.value = schemaString;
+        } catch (err) {
+          graphQLSchemaOutput.value = `${err?.message}\n\n${err?.stack}` ?? err;
+        }
+      }
 
-input2.addEventListener('change', format2);
-input2.addEventListener('keyup', format2);
-    //]]></script>
+      introspectionQueryJsonResult.addEventListener(
+        "change",
+        jsonSchemaToGraphqlSchema
+      );
+      introspectionQueryJsonResult.addEventListener(
+        "keyup",
+        jsonSchemaToGraphqlSchema
+      );
+      //]]>
+    </script>
   </body>
 </html>
