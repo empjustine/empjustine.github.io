@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Yaml Toolbox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/css">
+      /*<![CDATA[*/
+      body {
+        margin: 0;
+      }
+      textarea {
+        width: 99.99%;
+        resize: vertical;
+      }
+      /*]]>*/
+    </style>
+  </head>
+  <body>
+    <div class="grid">
+      <label>
+        yaml:
+        <textarea
+          class="yamlInput"
+          id="yamlInput"
+          placeholder="# yaml here"
+        ></textarea>
+      </label>
+      <details open="open">
+        <summary><label for="jsonMinOutput">jsonMinOutput</label></summary>
+        <textarea
+          name="jsonMinOutput"
+          id="jsonMinOutput"
+          disabled="disabled"
+        ></textarea>
+      </details>
+      <details>
+        <summary><label for="jsonOutput">jsonOutput</label></summary>
+        <textarea
+          name="jsonOutput"
+          id="jsonOutput"
+          disabled="disabled"
+        ></textarea>
+      </details>
+    </div>
+
+    <script type="module"></script>
+    <script type="module">
+      //<![CDATA[
+      import YAML from "https://cdn.skypack.dev/yaml";
+
+      const yamlInput = document.querySelector("textarea#yamlInput");
+      const jsonOutput = document.querySelector("textarea#jsonOutput");
+      const jsonMinOutput = document.querySelector("textarea#jsonMinOutput");
+
+      function format() {
+        try {
+          const value = YAML.parse(yamlInput.value);
+          jsonMinOutput.value = JSON.stringify(value, null);
+          jsonOutput.value = JSON.stringify(value, null, 2);
+        } catch (err) {
+          const errText = `${err?.message}\n\n${err?.stack}` ?? err;
+          jsonOutput.value = errText;
+          jsonMinOutput.value = errText;
+        }
+      }
+
+      yamlInput.addEventListener("change", format);
+      yamlInput.addEventListener("keyup", format);
+      //]]>
+    </script>
+  </body>
+</html>
