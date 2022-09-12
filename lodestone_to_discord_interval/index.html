@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>
+      FINAL FANTASY XIV, The Lodestone Interval to Discord timestamp
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/css">
+      /*<![CDATA[*/
+      * {
+        font-family: "Source Code Pro", monospace;
+      }
+      input {
+        width: 99.99%;
+      }
+      /*]]>*/
+    </style>
+  </head>
+  <body>
+    <form>
+      <label
+        ><i>FINAL FANTASY XIV, The Lodestone</i> interval:<br /><input
+          type="text"
+          name="lodestoneTime"
+          id="lodestoneTime"
+          value=""
+      /></label>
+      <br />
+      <p>
+        Example <i>FINAL FANTASY XIV, The Lodestone</i> interval:<br /><small
+          >Sep. 12, 2022 7:00 p.m. to Sep. 13, 2022 3:00 a.m. (PDT)<br />
+          Aug. 2, 2022 8:00 p.m. to 10:00 p.m. (PDT)</small
+        >
+      </p>
+    </form>
+    <dl class="res">
+      <dt>Discord Unix Timestamp Message</dt>
+    </dl>
+    <p>
+      ©2010 - 2022 <b>SQUARE ENIX</b> CO., LTD. All Rights Reserved.<br />FINAL
+      FANTASY, FINAL FANTASY XIV, FFXIV, SQUARE ENIX, and the SQUARE ENIX logo
+      are registered trademarks or trademarks of Square Enix Holdings Co., Ltd.
+    </p>
+    <script type="module">
+      //<![CDATA[
+      import { DateTime } from "https://cdn.skypack.dev/pin/luxon@v3.0.3-f8PzERSJxz21TIoWAFwg/mode=imports/optimized/luxon.js";
+      import { select } from "https://cdn.skypack.dev/pin/d3-selection@v3.0.0-sAmQ3giCT8irML5wz1T1/mode=imports/optimized/d3-selection.js";
+
+      const lodestoneMonths = {
+        "Jan.": 1,
+        "Feb.": 2,
+        "Mar.": 3,
+        "Apr.": 4,
+        "Jun.": 6,
+        "Jul.": 7,
+        "Aug.": 8,
+        "Sep.": 9,
+        "Oct.": 10,
+        "Nov.": 11,
+        "Dec.": 12,
+        January: 1,
+        February: 2,
+        March: 3,
+        April: 4,
+        May: 5,
+        June: 6,
+        July: 7,
+        August: 8,
+        September: 9,
+        October: 10,
+        November: 11,
+        December: 12,
+      };
+
+      function zeroPad(int, minLenght) {
+        return String(parseInt(int, 10)).padStart(minLenght, "0");
+      }
+
+      function parse12HourTime(timeStr) {
+        const [time, period] = timeStr.split(" ");
+        const [twelveH, m] = time.split(":").map((i) => parseInt(i, 10));
+        const twentyFourH =
+          (twelveH !== 12 ? twelveH : 0) + (period === "p.m." ? 12 : 0);
+        return `${zeroPad(twentyFourH, 2)}:${zeroPad(m, 2)}`;
+      }
+
+      const lodestoneTimeRaw = new URL(window.location).searchParams.get(
+        "lodestoneTime"
+      );
+      document.querySelector("input#lodestoneTime").value = lodestoneTimeRaw;
+      const unixTimestamps = [
+        // Sep. 12, 2022 7:00 p.m. to Sep. 13, 2022 3:00 a.m. (PDT)
+        ...lodestoneTimeRaw.matchAll(
+          /([A-Za-z]{3}.?|[A-Za-z]{3,9}) (\d{1,2}), (\d{4}) (\d{1,2}:\d\d [ap]\.m\.)/g
+        ),
+        // Aug. 2, 2022 8:00 p.m. to 10:00 p.m. (PDT)
+        ...lodestoneTimeRaw.matchAll(
+          /([A-Za-z]{3}.?|[A-Za-z]{3,9}) (\d{1,2}), (\d{4}) \d{1,2}:\d\d [ap]\.m\. to (\d{1,2}:\d\d [ap]\.m\.)/g
+        ),
+      ].map((m) => {
+        const month = zeroPad(lodestoneMonths[m[1]], 2);
+        const day = zeroPad(m[2], 2);
+        const year = zeroPad(m[3], 2);
+        const time = parse12HourTime(m[4]);
+        const iso8601Timestamp = `${year}-${month}-${day}T${time}`;
+        const dateTime = DateTime.fromISO(iso8601Timestamp, {
+          zone: "America/Los_Angeles",
+        });
+        const unixInteger = dateTime.toUnixInteger();
+        const extendedIso8601 = dateTime.toISO({ extendedZone: true });
+        console.dir({ m, iso8601Timestamp, dateTime, unixInteger });
+        return `${extendedIso8601}: <t:${unixInteger}:F>`;
+      });
+      // Update…
+      const td = select("dl.res").selectAll("dd").data(unixTimestamps);
+      // Enter…
+      td.enter()
+        .append("dd")
+        .text((t) => t);
+      //]]>
+    </script>
+  </body>
+</html>
