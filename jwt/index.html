@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Deflate JWT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/css">
+      /*<![CDATA[*/
+      * {
+        font-family: "Source Code Pro", monospace;
+      }
+      textarea {
+        width: 99.99%;
+        height: 8em;
+      }
+      /*]]>*/
+    </style>
+  </head>
+  <body>
+    <form>
+      <label
+        >Compact JWT input:<br /><textarea name="jwt" id="jwt">
+e30.e30.e30</textarea
+        ></label
+      ><br /><label
+        >Compact output:<br /><textarea
+          name="json"
+          id="json1"
+        ></textarea></label
+      ><br /><label
+        >Deflate output:<br /><textarea name="json" id="json2"></textarea>
+      </label>
+    </form>
+    <script type="module">
+      //<![CDATA[
+      import {
+        decodeJwt,
+        base64url,
+      } from "https://cdn.skypack.dev/pin/jose@v4.9.3-5GF0qTBMGGI363UtEIRn/mode=imports/optimized/jose.js";
+      import { inflate } from "https://cdn.skypack.dev/pin/pako@v2.0.4-WjVAu7tfrtztTc6SRRg6/mode=imports/optimized/pako.js";
+
+      const jwtInput = document.querySelector("textarea#jwt");
+      const json1Output = document.querySelector("textarea#json1");
+      const json2Output = document.querySelector("textarea#json2");
+
+      function eventHandler(event) {
+        json1Output.value = "";
+        json2Output.value = "";
+
+        try {
+          json1Output.value = JSON.stringify(
+            decodeJwt(jwtInput.value),
+            null,
+            1
+          );
+        } catch (err) {
+          console.dir(err1);
+          json1Output.value = JSON.stringify(
+            {
+              type: "JWT ERROR",
+              err: err,
+              message: err?.message,
+              stack: err?.stack?.split?.("\n"),
+            },
+            null,
+            1
+          );
+        }
+
+        try {
+          const [_jwtHeader, jwtCompressedClaims, _jwtSignature] =
+            jwtInput.value.split(".");
+          const jwtClaims = inflate(base64url.decode(jwtCompressedClaims), {
+            to: "string",
+          });
+          json2Output.value = JSON.stringify(JSON.parse(jwtClaims), null, 1);
+        } catch (err2) {
+          console.dir(err2);
+          json2Output.value = JSON.stringify(
+            {
+              type: "DEFLATE ERROR",
+              err: err2,
+              message: err2?.message,
+              stack: err2?.stack?.split?.("\n"),
+            },
+            null,
+            1
+          );
+        }
+      }
+
+      jwtInput.addEventListener("focus", eventHandler);
+      jwtInput.addEventListener("blur", eventHandler);
+      jwtInput.addEventListener("keyup", eventHandler);
+      //]]>
+    </script>
+  </body>
+</html>
