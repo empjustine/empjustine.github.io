@@ -64,14 +64,14 @@ e30.e30.e30</textarea
             null,
             1
           );
-        } catch (err) {
+        } catch (err1) {
           console.dir(err1);
           json1Output.value = JSON.stringify(
             {
               type: "JWT ERROR",
-              err: err,
-              message: err?.message,
-              stack: err?.stack?.split?.("\n"),
+              err: err1,
+              message: err1?.message,
+              stack: err1?.stack?.split?.("\n"),
             },
             null,
             1
