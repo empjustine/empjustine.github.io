@@ -84,7 +84,7 @@ e30.e30.e30</textarea
           const jwtClaims = inflate(base64url.decode(jwtCompressedClaims), {
             to: "string",
           });
-          json2Output.value = JSON.stringify(JSON.parse(jwtClaims), null, 1);
+          json2Output.value = `${_jwtHeader}.${jwtClaims}.${_jwtSignature}\n\n` + JSON.stringify(JSON.parse(jwtClaims), null, 1);
         } catch (err2) {
           console.dir(err2);
           json2Output.value = JSON.stringify(
