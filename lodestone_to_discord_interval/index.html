@@ -57,90 +57,81 @@
       //<![CDATA[
       import { DateTime } from "https://cdn.skypack.dev/pin/luxon@v3.0.3-f8PzERSJxz21TIoWAFwg/mode=imports/optimized/luxon.js";
       import { select } from "https://cdn.skypack.dev/pin/d3-selection@v3.0.0-sAmQ3giCT8irML5wz1T1/mode=imports/optimized/d3-selection.js";
-      // import debounce from "https://cdn.skypack.dev/pin/lodash.debounce@v4.0.8-aOLIwnE2RethWPrEzTeR/mode=imports/optimized/lodash.debounce.js";
 
       const lodestoneTimeInput = document.querySelector("input#lodestoneTime");
       lodestoneTimeInput.value = new URL(window.location).searchParams.get(
         "lodestoneTime"
       );
-      // function pushNewState() {
-      //   const newPageUrl = new URL(window.location);
-      //   newPageUrl.searchParams.set("lodestoneTime", lodestoneTimeInput.value);
-      //   window.history.pushState(undefined, document.title, newPageUrl);
-      // }
-      // lodestoneTimeInput.addEventListener(
-      //   "blur",
-      //   debounce(() => {
-      //     updateUnixTimestamps();
-      //     pushNewState();
-      //   }, 300)
-      // );
       select("dl.res")
         .selectAll("dd")
         .data(
           [
             // Sep. 12, 2022 7:00 p.m. to Sep. 13, 2022 3:00 a.m. (PDT)
             ...lodestoneTimeInput.value.matchAll(
-              /([A-Za-z]{3}.?|[A-Za-z]{3,9}) (\d{1,2}), (\d{4}) (?:at )?(\d{1,2}):(\d\d) ([ap]\.m\.)/g
+              /([A-Z][a-z]{2}\.|[A-Z][a-z]{2,8}) (\d{1,2}), (\d{4}) (?:at )?(\d{1,2}):(\d\d) ([ap]\.m\.)/g
             ),
             // Aug. 2, 2022 8:00 p.m. to 10:00 p.m. (PDT)
             // Sep. 14, 2022 at 10:00 p.m. to 10:15 p.m. (PDT)
             ...lodestoneTimeInput.value.matchAll(
-              /([A-Za-z]{3}.?|[A-Za-z]{3,9}) (\d{1,2}), (\d{4}) (?:at )?\d{1,2}:\d\d [ap]\.m\. to (\d{1,2}):(\d\d) ([ap]\.m\.)/g
+              /([A-Z][a-z]{2}\.|[A-Z][a-z]{2,8}) (\d{1,2}), (\d{4}) (?:at )?\d{1,2}:\d\d [ap]\.m\. to (\d{1,2}):(\d\d) ([ap]\.m\.)/g
             ),
-          ].map((m, i) => {
-            const [
-              fullMatch,
-              monthName,
-              dayStr,
-              yearStr,
-              periodHourStr,
-              minuteStr,
-              period,
-            ] = m;
-            const dateTime = DateTime.fromObject(
-              {
-                year: parseInt(yearStr, 10),
-                month: {
-                  "Jan.": 1,
-                  "Feb.": 2,
-                  "Mar.": 3,
-                  "Apr.": 4,
-                  "Jun.": 6,
-                  "Jul.": 7,
-                  "Aug.": 8,
-                  "Sep.": 9,
-                  "Oct.": 10,
-                  "Nov.": 11,
-                  "Dec.": 12,
-                  January: 1,
-                  February: 2,
-                  March: 3,
-                  April: 4,
-                  May: 5,
-                  June: 6,
-                  July: 7,
-                  August: 8,
-                  September: 9,
-                  October: 10,
-                  November: 11,
-                  December: 12,
-                }[monthName],
-                day: parseInt(dayStr, 10),
-                hour:
-                  (periodHourStr === "12" ? 0 : parseInt(periodHourStr, 10)) +
-                  (period === "p.m." ? 12 : 0),
-                minute: parseInt(minuteStr, 10),
-              },
-              { zone: "America/Los_Angeles" }
-            );
-            const isoWithTimezone = dateTime.toISO({ extendedZone: true });
-            const unixInteger = dateTime.toUnixInteger();
-            return `${isoWithTimezone}: <t:${unixInteger}:F>`;
-          })
+          ].map(
+            (
+              [
+                _fullMatch,
+                monthName,
+                dayStr,
+                yearStr,
+                periodHourStr,
+                minuteStr,
+                period,
+              ],
+              _i
+            ) => {
+              const dateTime = DateTime.fromObject(
+                {
+                  year: parseInt(yearStr, 10),
+                  month: {
+                    "Jan.": 1,
+                    "Feb.": 2,
+                    "Mar.": 3,
+                    "Apr.": 4,
+                    "Jun.": 6,
+                    "Jul.": 7,
+                    "Aug.": 8,
+                    "Sep.": 9,
+                    "Oct.": 10,
+                    "Nov.": 11,
+                    "Dec.": 12,
+                    January: 1,
+                    February: 2,
+                    March: 3,
+                    April: 4,
+                    May: 5,
+                    June: 6,
+                    July: 7,
+                    August: 8,
+                    September: 9,
+                    October: 10,
+                    November: 11,
+                    December: 12,
+                  }[monthName],
+                  day: parseInt(dayStr, 10),
+                  hour:
+                    (periodHourStr === "12" ? 0 : parseInt(periodHourStr, 10)) +
+                    (period === "p.m." ? 12 : 0),
+                  minute: parseInt(minuteStr, 10),
+                },
+                { zone: "America/Los_Angeles" }
+              );
+              const isoWithTimezone = dateTime.toISO({ extendedZone: true });
+              const unixInteger = dateTime.toUnixInteger();
+              return `${isoWithTimezone}: <t:${unixInteger}:F>`;
+            }
+          )
         )
         .join(
-          (enter) => enter.append("dd").text((t) => t),
+          (enter) => enter.append("p").text((t) => t),
           (update) => update.text((t) => t),
           (exit) => exit.remove()
         );
