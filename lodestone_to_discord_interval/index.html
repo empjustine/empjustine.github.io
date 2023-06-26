@@ -19,36 +19,59 @@
     />
     <style type="text/css">
       /*<![CDATA[*/
-      * {
-        font-family: "Source Code Pro", monospace;
+      input,
+      textarea {
+        width: 90%;
       }
-      input {
-        width: 99.99%;
+
+      .sourceCodeProCapsize {
+        font-family: "Source Code Pro", monospace;
+        font-size: 24.2424px;
+        line-height: 24px;
+      }
+
+      .sourceCodeProCapsize::before {
+        content: "";
+        margin-bottom: -0.1905em;
+        display: table;
+      }
+
+      .sourceCodeProCapsize::after {
+        content: "";
+        margin-top: -0.1395em;
+        display: table;
       }
       /*]]>*/
     </style>
   </head>
   <body>
     <form>
-      <label
+      <label class="sourceCodeProCapsize"
         ><i>FINAL FANTASY XIV, The Lodestone</i> interval:<br /><input
           type="text"
           name="lodestoneTime"
           id="lodestoneTime"
+          class="sourceCodeProCapsize"
           value=""
       /></label>
     </form>
-    <p>
+    <p class="sourceCodeProCapsize">
       Example <i>FINAL FANTASY XIV, The Lodestone</i> interval:<br /><small
         >Sep. 12, 2022 7:00 p.m. to Sep. 13, 2022 3:00 a.m. (PDT)<br />Aug. 2,
         2022 8:00 p.m. to 10:00 p.m. (PDT)<br />Sep. 14, 2022 at 10:00 p.m. to
         10:15 p.m. (PDT)</small
       >
     </p>
-    <dl class="res">
-      <dt>Discord Unix Timestamp Message</dt>
-    </dl>
-    <p>
+    <form>
+      <label class="sourceCodeProCapsize"
+        ><i>Discord</i> interval:<br /><textarea
+          name="discordTime"
+          id="discordTime"
+          class="sourceCodeProCapsize"
+        ></textarea>
+      </label>
+    </form>
+    <p class="sourceCodeProCapsize">
       ©2010 - 2022 <b>SQUARE ENIX</b> CO., LTD. All Rights Reserved.<br />FINAL
       FANTASY, FINAL FANTASY XIV, FFXIV, SQUARE ENIX, and the SQUARE ENIX logo
       are registered trademarks or trademarks of Square Enix Holdings Co., Ltd.
@@ -56,85 +79,93 @@
     <script type="module">
       //<![CDATA[
       import { DateTime } from "https://cdn.skypack.dev/pin/luxon@v3.0.3-f8PzERSJxz21TIoWAFwg/mode=imports/optimized/luxon.js";
-      import { select } from "https://cdn.skypack.dev/pin/d3-selection@v3.0.0-sAmQ3giCT8irML5wz1T1/mode=imports/optimized/d3-selection.js";
 
       const lodestoneTimeInput = document.querySelector("input#lodestoneTime");
+      const discordTimeOutput = document.querySelector("textarea#discordTime");
       lodestoneTimeInput.value = new URL(window.location).searchParams.get(
         "lodestoneTime"
       );
-      select("dl.res")
-        .selectAll("dd")
-        .data(
-          [
-            // Sep. 12, 2022 7:00 p.m. to Sep. 13, 2022 3:00 a.m. (PDT)
-            ...lodestoneTimeInput.value.matchAll(
-              /([A-Z][a-z]{2}\.|[A-Z][a-z]{2,8}) (\d{1,2}), (\d{4}) (?:at )?(\d{1,2}):(\d\d) ([ap]\.m\.)/g
-            ),
-            // Aug. 2, 2022 8:00 p.m. to 10:00 p.m. (PDT)
-            // Sep. 14, 2022 at 10:00 p.m. to 10:15 p.m. (PDT)
-            ...lodestoneTimeInput.value.matchAll(
-              /([A-Z][a-z]{2}\.|[A-Z][a-z]{2,8}) (\d{1,2}), (\d{4}) (?:at )?\d{1,2}:\d\d [ap]\.m\. to (\d{1,2}):(\d\d) ([ap]\.m\.)/g
-            ),
-          ].map(
-            (
-              [
-                _fullMatch,
-                monthName,
-                dayStr,
-                yearStr,
-                periodHourStr,
-                minuteStr,
-                period,
-              ],
-              _i
-            ) => {
-              const dateTime = DateTime.fromObject(
-                {
-                  year: parseInt(yearStr, 10),
-                  month: {
-                    "Jan.": 1,
-                    "Feb.": 2,
-                    "Mar.": 3,
-                    "Apr.": 4,
-                    "Jun.": 6,
-                    "Jul.": 7,
-                    "Aug.": 8,
-                    "Sep.": 9,
-                    "Oct.": 10,
-                    "Nov.": 11,
-                    "Dec.": 12,
-                    January: 1,
-                    February: 2,
-                    March: 3,
-                    April: 4,
-                    May: 5,
-                    June: 6,
-                    July: 7,
-                    August: 8,
-                    September: 9,
-                    October: 10,
-                    November: 11,
-                    December: 12,
-                  }[monthName],
-                  day: parseInt(dayStr, 10),
-                  hour:
-                    (periodHourStr === "12" ? 0 : parseInt(periodHourStr, 10)) +
-                    (period === "p.m." ? 12 : 0),
-                  minute: parseInt(minuteStr, 10),
-                },
-                { zone: "America/Los_Angeles" }
-              );
-              const isoWithTimezone = dateTime.toISO({ extendedZone: true });
-              const unixInteger = dateTime.toUnixInteger();
-              return `${isoWithTimezone}: <t:${unixInteger}:F>`;
-            }
-          )
-        )
-        .join(
-          (enter) => enter.append("p").text((t) => t),
-          (update) => update.text((t) => t),
-          (exit) => exit.remove()
+
+      const LODESTONE_MONTHS = {
+        "Jan.": 1,
+        "Feb.": 2,
+        "Mar.": 3,
+        "Apr.": 4,
+        "Jun.": 6,
+        "Jul.": 7,
+        "Aug.": 8,
+        "Sep.": 9,
+        "Oct.": 10,
+        "Nov.": 11,
+        "Dec.": 12,
+        January: 1,
+        February: 2,
+        March: 3,
+        April: 4,
+        May: 5,
+        June: 6,
+        July: 7,
+        August: 8,
+        September: 9,
+        October: 10,
+        November: 11,
+        December: 12,
+      };
+
+      function parse12HourClockHour(periodHourStr, period) {
+        return (
+          (periodHourStr === "12" ? 0 : parseInt(periodHourStr, 10)) +
+          (period === "p.m." ? 12 : 0)
         );
+      }
+
+      function parseLodestoneDateTime(
+        [
+          _fullMatch,
+          monthName,
+          dayStr,
+          yearStr,
+          periodHourStr,
+          minuteStr,
+          periodStr,
+        ],
+        _i
+      ) {
+        return DateTime.fromObject(
+          {
+            year: parseInt(yearStr, 10),
+            month: LODESTONE_MONTHS[monthName],
+            day: parseInt(dayStr, 10),
+            hour: parse12HourClockHour(periodHourStr, periodStr),
+            minute: parseInt(minuteStr, 10),
+          },
+          { zone: "America/Los_Angeles" }
+        );
+      }
+
+      const matches = [
+        // Sep. 12, 2022 7:00 p.m. to Sep. 13, 2022 3:00 a.m. (PDT)
+        ...lodestoneTimeInput.value.matchAll(
+          /([A-Z][a-z]{2}\.|[A-Z][a-z]{2,8}) (\d{1,2}), (\d{4}) (?:at )?(\d{1,2}):(\d\d) ([ap]\.m\.)/g
+        ),
+        // Aug. 2, 2022 8:00 p.m. to 10:00 p.m. (PDT)
+        // Sep. 14, 2022 at 10:00 p.m. to 10:15 p.m. (PDT)
+        ...lodestoneTimeInput.value.matchAll(
+          /([A-Z][a-z]{2}\.|[A-Z][a-z]{2,8}) (\d{1,2}), (\d{4}) (?:at )?\d{1,2}:\d\d [ap]\.m\. to (\d{1,2}):(\d\d) ([ap]\.m\.)/g
+        ),
+      ];
+
+      function dateTimeToDiscordTimestamp(dateTime) {
+        const isoWithTimezone = dateTime.toISO({ extendedZone: true });
+        const unixInteger = dateTime.toUnixInteger();
+        return `${isoWithTimezone}: <t:${unixInteger}:F> (<t:${unixInteger}:R>)`;
+      }
+
+      discordTimeOutput.textContent = matches
+        .map(parseLodestoneDateTime)
+        .map(dateTimeToDiscordTimestamp)
+        .join("\n");
+
       //]]>
     </script>
   </body>
