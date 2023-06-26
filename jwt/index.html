@@ -21,8 +21,14 @@
         font-family: "Source Code Pro", monospace;
       }
       textarea {
-        width: 99.99%;
+        width: 90%;
         height: 8em;
+      }
+      .long-textarea {
+        height: 16em;
+      }
+      .short-textarea {
+        height: 1em;
       }
       /*]]>*/
     </style>
@@ -30,83 +36,127 @@
   <body>
     <form>
       <label
-        >Compact JWT input:<br /><textarea name="jwt" id="jwt">
+        >Input:<br /><textarea
+          name="inputRaw"
+          id="inputRaw"
+          class="short-textarea"
+        >
 e30.e30.e30</textarea
         ></label
       ><br /><label
-        >Compact output:<br /><textarea
-          name="json"
-          id="json1"
+        >Analysis:<br /><textarea
+          name="outputAnalysis"
+          id="outputAnalysis"
+          class="long-textarea"
         ></textarea></label
       ><br /><label
-        >Deflate output:<br /><textarea name="json" id="json2"></textarea>
+        >Inflate:<br /><textarea
+          name="outputInflate"
+          id="outputInflate"
+          class="short-textarea"
+        ></textarea></label
+      ><br /><label
+        >Inflate Analysis:<br /><textarea
+          name="outputInflateAnalysis"
+          id="outputInflateAnalysis"
+          class="long-textarea"
+        ></textarea></label
+      ><br /><label
+        >Deflate:<br /><textarea
+          name="outputDeflate"
+          id="outputDeflate"
+          class="short-textarea"
+        ></textarea>
       </label>
     </form>
     <script type="module">
       //<![CDATA[
       import {
         decodeJwt,
+        decodeProtectedHeader,
         base64url,
       } from "https://cdn.skypack.dev/pin/jose@v4.9.3-5GF0qTBMGGI363UtEIRn/mode=imports/optimized/jose.js";
-      import { inflate } from "https://cdn.skypack.dev/pin/pako@v2.0.4-WjVAu7tfrtztTc6SRRg6/mode=imports/optimized/pako.js";
+      import {
+        deflate,
+        inflate,
+      } from "https://cdn.skypack.dev/pin/pako@v2.0.4-WjVAu7tfrtztTc6SRRg6/mode=imports/optimized/pako.js";
+      const inputRaw = document.querySelector("textarea#inputRaw");
+      const outputAnalysis = document.querySelector("textarea#outputAnalysis");
+      const outputInflate = document.querySelector("textarea#outputInflate");
+      const outputInflateAnalysis = document.querySelector(
+        "textarea#outputInflateAnalysis"
+      );
+      const outputDeflate = document.querySelector("textarea#outputDeflate");
 
-      const jwtInput = document.querySelector("textarea#jwt");
-      const json1Output = document.querySelector("textarea#json1");
-      const json2Output = document.querySelector("textarea#json2");
+      function prettyJson(value) {
+        return JSON.stringify(value, null, 2);
+      }
 
-      function eventHandler(event) {
-        json1Output.value = "";
-        json2Output.value = "";
+      function prettyError(err) {
+        return JSON.stringify(
+          {
+            name: err.name,
+            cause: err.cause,
+            message: err.message ?? err,
+            stack: err.stack?.split("\n"),
+          },
+          null,
+          2
+        );
+      }
+
+      function eventHandler(_event) {
+        outputAnalysis.value = "";
+        outputInflate.value = "";
+        outputInflateAnalysis.value = "";
+        outputDeflate.value = "";
 
         try {
-          json1Output.value = JSON.stringify(
-            decodeJwt(jwtInput.value),
-            null,
-            1
-          );
-        } catch (err1) {
-          console.dir(err1);
-          json1Output.value = JSON.stringify(
-            {
-              type: "JWT ERROR",
-              err: err1,
-              message: err1?.message,
-              stack: err1?.stack?.split?.("\n"),
-            },
-            null,
-            1
-          );
+          const header = prettyJson(decodeProtectedHeader(inputRaw.value));
+          const payload = prettyJson(decodeJwt(inputRaw.value));
+          outputAnalysis.value = `${header} . ${payload}`;
+        } catch (err) {
+          outputAnalysis.value = prettyError(err);
         }
 
         try {
-          const [_jwtHeader, jwtCompressedClaims, _jwtSignature] =
-            jwtInput.value.split(".");
-          const jwtClaims = inflate(base64url.decode(jwtCompressedClaims), {
-            to: "string",
-          });
-          json2Output.value =
-            `${_jwtHeader}.${base64url.encode(
-              jwtClaims
-            )}.${_jwtSignature}\n\n` +
-            JSON.stringify(JSON.parse(jwtClaims), null, 1);
-        } catch (err2) {
-          console.dir(err2);
-          json2Output.value = JSON.stringify(
-            {
-              type: "DEFLATE ERROR",
-              err: err2,
-              message: err2?.message,
-              stack: err2?.stack?.split?.("\n"),
-            },
-            null,
-            1
+          const [jwtHeader, jwtRawClaims, jwtSignature] =
+            inputRaw.value.split(".");
+          const jwtNewClaims = base64url.encode(
+            inflate(base64url.decode(jwtRawClaims), {
+              to: "string",
+            })
           );
+          outputInflate.value = `${jwtHeader}.${jwtNewClaims}.${jwtSignature}`;
+        } catch (err) {
+          outputInflate.value = prettyError(err);
+        }
+
+        try {
+          const header = decodeProtectedHeader(outputInflate.value);
+          const payload = prettyJson(decodeJwt(outputInflate.value));
+          outputInflateAnalysis.value = `${prettyJson(header)} . ${payload}`;
+        } catch (err) {
+          outputInflateAnalysis.value = prettyError(err);
+        }
+
+        try {
+          const [jwtHeader, jwtRawClaims, jwtSignature] =
+            inputRaw.value.split(".");
+          const jwtNewClaims = base64url.encode(
+            deflate(base64url.decode(jwtRawClaims), {
+              to: "string",
+            })
+          );
+          outputDeflate.value = `${jwtHeader}.${jwtNewClaims}.${jwtSignature}`;
+        } catch (err) {
+          outputDeflate.value = prettyError(err);
         }
       }
 
-      jwtInput.addEventListener("focus", eventHandler);
-      jwtInput.addEventListener("blur", eventHandler);
-      jwtInput.addEventListener("keyup", eventHandler);
+      inputRaw.addEventListener("focus", eventHandler);
+      inputRaw.addEventListener("blur", eventHandler);
+      inputRaw.addEventListener("keyup", eventHandler);
       //]]>
     </script>
   </body>
