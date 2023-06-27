@@ -1,8 +1,4 @@
 {
-  "dependencies": {
-    "@capsizecss/core": "^3.1.1",
-    "@capsizecss/metrics": "^1.2.0"
-  },
   "engines": {
     "node": "18.16.1",
     "pnpm": "7.33.1"
@@ -11,6 +7,8 @@
     "format": "prettier . --write"
   },
   "devDependencies": {
+    "@capsizecss/core": "^3.1.1",
+    "@capsizecss/metrics": "^1.2.0",
     "prettier": "^2.8.8"
   }
 }

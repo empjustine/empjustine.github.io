@@ -22,241 +22,255 @@
       }
       td,
       th {
+        padding: 4px;
         border: 1px solid;
       }
       td {
         text-shadow: 0 0 1px white, 0 0 1px white, 0 0 1px white, 0 0 1px white;
+        text-align: center;
       }
       /*]]>*/
     </style>
   </head>
   <body>
-    <p>Parameters</p>
-    <dl>
-      <dt>startTime</dt>
-      <dd id="startTime">UNKNOWN_START_TIME</dd>
-    </dl>
-    <dl id="intervals">
-      <dt>interval</dt>
-      <dd>NO_INTERVALS</dd>
-    </dl>
     <table>
       <thead>
-        <tr>
-          <th scope="col">Timezone</th>
+        <tr class="month">
+          <th></th>
+        </tr>
+        <tr class="day">
+          <th></th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>Pacific/Auckland</summary>
-              New Zealand Standard Time/New Zealand Daylight Time<br />Wellington,
-              New Zealand<br />
-            </details>
-          </th>
-        </tr>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>Australia/Melbourne</summary>
-              Australian Eastern Standard Time/Australian Eastern Daylight
-              Time<br />Victoria, Australia <br />
-            </details>
-          </th>
-        </tr>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>Asia/Tokyo</summary>
-              Japan Standard Time/Japan Central Standard
-              Time/日本標準時/中央標準時<br />Tokyo, Japan<br />
-            </details>
-          </th>
-        </tr>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>Europe/Stockholm</summary>
-              Central European Time/Central European Summer Time<br />Stockholm,
-              Sweden<br />
-            </details>
-          </th>
-        </tr>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>Europe/London</summary>
-              Greenwich Mean Time/British Summer Time<br />Edinburgh, United
-              Kingdom<br />
-            </details>
-          </th>
-        </tr>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>Etc/UTC</summary>
-              Coordinated Universal Time<br />Coordinated Universal Time<br />
-            </details>
-          </th>
-        </tr>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>America/Sao_Paulo</summary>
-              Brasília time<br />Brasilia, Brazil<br />America/Araguaina,
-              America/Bahia, America/Belem, America/Fortaleza, America/Maceio,
-              America/Recife, America/Santarem
-            </details>
-          </th>
-        </tr>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>America/New_York</summary>
-              Eastern Daylight Time of the United States of America/Eastern
-              Standard Time of the United States of America<br />New York,
-              United States<br />America/Detroit, America/Indiana/Indianapolis,
-              America/Indiana/Marengo, America/Indiana/Petersburg,
-              America/Indiana/Vevay, America/Indiana/Vincennes,
-              America/Indiana/Winamac, America/Kentucky/Louisville,
-              America/Kentucky/Monticello
-            </details>
-          </th>
-        </tr>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>America/Chicago</summary>
-              Central Daylight Time of the United States of America/Central
-              Standard Time of the United States of America<br />Chicago, United
-              States<br />America/Indiana/Knox, America/Indiana/Tell_City,
-              America/Menominee, America/North_Dakota/Beulah,
-              America/North_Dakota/Center, America/North_Dakota/New_Salem
-            </details>
-          </th>
-        </tr>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>America/Denver</summary>
-              Mountain Daylight Time of the United States of America/Mountain
-              Standard Time of the United States of America<br />Denver, United
-              States<br />America/Boise
-            </details>
-          </th>
-        </tr>
-        <tr>
-          <th scope="row">
-            <details>
-              <summary>America/Los_Angeles</summary>
-              Pacific Daylight Time of the United States of America/Pacific
-              Standard Time of the United States of America<br />Los Angeles,
-              United States<br />
-            </details>
-          </th>
-        </tr>
-      </tbody>
+      <tbody></tbody>
     </table>
-    <p>Local browser believes it is in:</p>
-    <dl>
-      <dt>
-        <a href="https://www.iana.org/time-zones">IANA Time Zone Database</a>
-        time zone
-      </dt>
-      <dd id="currentIanaTimezone">UNKNOWN_TIMEZONE</dd>
-    </dl>
-    <dl>
-      <dt>Current Time</dt>
-      <dd id="currentTime">UNKNOWN_TIME_NOW</dd>
-    </dl>
+    <details>
+      <summary>Inputs</summary>
+      <form>
+        <label
+          >now<br /><input
+            type="text"
+            value="NOW_NOT_SET"
+            name="now"
+            id="now"
+            value="undefined" /></label
+        ><br />
+        <label
+          >intervals ⧖<br /><input
+            type="text"
+            id="⧖"
+            name="⧖"
+            value="[]" /></label
+        ><br />
+        <label
+          >timezones 🈁<br /><input
+            type="text"
+            id="🈁"
+            name="🈁"
+            value="[]" /></label
+        ><br />
+        <label
+          >time range Δ<br /><input
+            type="text"
+            id="Δ"
+            name="Δ"
+            value="[]" /></label
+        ><br />
+        <label>
+          (Browser)
+          <a href="https://www.iana.org/time-zones">IANA Time Zone Database</a>
+          time zone
+          <br /><input
+            type="text"
+            id="currentIanaTimezone"
+            name="currentIanaTimezone"
+            disabled="disabled"
+            value="UNKNOWN_IANA_TIMEZONE"
+        /></label>
+        <input type="submit" value="generate permalink" />
+      </form>
+    </details>
     <p>
       <a href="https://timezonefinder.michelfe.it/gui/0_-46.633956_-23.550385"
         >Map with nearest timezones</a
       >
     </p>
-    <p>
-      <a href="https://hammertime.cyou/"
-        >HammerTime dynamic Discord timestamp generator</a
-      >
-    </p>
     <script type="module">
       //<![CDATA[
-      document.querySelector("dd#currentIanaTimezone").innerText =
-        Intl.DateTimeFormat().resolvedOptions().timeZone;
-      document.querySelector("dd#currentTime").innerText =
-        new Date().toISOString();
-      //]]>
-    </script>
-    <script type="module">
-      //<![CDATA[
+
+      // @see <repeating_interval> = Rn/<interval>
+      // @see <interval> = <start>/<end>
+      // @see <interval> = <start>/<duration>
+      // @see <interval> = <duration>/<end>
+      // @see <interval> = <duration>
+      // @see <duration> = PnYnMnDTnHnMnS
+      // @see <duration> = PnW
+      // @see <duration> = P<instant>
+
+      // @see <time> = hh:mm:ss.sss
+      // @see <time> = hh:mm:ss
+      // @see <time> = hh:mm
+      // @see <instant> = T<time>
+      // @see <instant> = <time>
+
+      // @see <instant> = YYYY-DDD
+      // @see <instant> = YYYYDDD
+      // @see <instant> = YYYY-Www
+      // @see <instant> = YYYYWww
+      // @see <instant> = YYYY-Www-D
+      // @see <instant> = YYYYWwwD
+      // @see <instant> = YYYY-MM-DD
+      // @see <instant> = YYYYMMDD
+      // @see <instant> = YYYY-MM
+      // @see <instant> = YYYY
+      // @see <instant> = ±YYYYY
+
+      // @see <instant> = YYYY-DDDT<time>
+      // @see <instant> = YYYYDDDT<time>
+      // @see <instant> = YYYY-WwwT<time>
+      // @see <instant> = YYYYWwwT<time>
+      // @see <instant> = YYYY-Www-DT<time>
+      // @see <instant> = YYYYWwwDT<time>
+      // @see <instant> = YYYY-MM-DDT<time>
+      // @see <instant> = YYYYMMDDT<time>
+      // @see <instant> = YYYY-MMT<time>
+      // @see <instant> = YYYYT<time>
+      // @see <instant> = ±YYYYYT<time>
+
       import {
         DateTime,
+        Duration,
         Interval,
+        Info,
       } from "https://cdn.skypack.dev/pin/luxon@v2.3.0-NfI5UpKDVoBRijPyPIBX/mode=imports/optimized/luxon.js";
       import { select } from "https://cdn.skypack.dev/pin/d3-selection@v3.0.0-sAmQ3giCT8irML5wz1T1/mode=imports/optimized/d3-selection.js";
       import { interpolateCividis } from "https://cdn.skypack.dev/pin/d3-scale-chromatic@v3.0.0-wlyjJbUexgtDqhQ6ksVy/mode=imports/optimized/d3-scale-chromatic.js";
-      const startTimeRaw = new URL(window.location).searchParams.get(
-        "startTime"
+
+      const rawNow = new URL(window.location).searchParams.get("now");
+      const now = rawNow
+        ? DateTime.fromISO(rawNow).toUTC()
+        : DateTime.now().toUTC();
+      const myTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      document.querySelector("input#currentIanaTimezone").value = myTimezone;
+      document.querySelector("input#now").value = now.toISO();
+
+      const timezones = JSON.parse(
+        new URL(window.location).searchParams.get("🈁") ?? "[]"
       );
-      const startTime = startTimeRaw
-        ? DateTime.fromISO(startTimeRaw)
-        : DateTime.now();
-      document.querySelector("dd#startTime").innerText = startTime.toISO();
-      const offsets = [-1, ...Array(26).keys()];
-      const intervals = new URL(window.location).searchParams
-        .getAll("interval")
-        .map((i) => Interval.fromISO(i));
-      for (const timezoneNode of document.querySelectorAll(
-        "tbody tr th details summary"
-      )) {
-        // Update…
-        const td = select(timezoneNode.parentNode.parentNode.parentNode)
-          .selectAll("td")
-          .data(offsets);
-        // Enter…
-        td.enter()
-          .append("td")
-          .style("background", (offset) =>
-            interpolateCividis(
-              Math.sin(
-                (startTime
-                  .plus({ hours: offset })
-                  .setZone(timezoneNode.innerText).hour *
-                  Math.PI) /
-                  24
-              )
-            )
-          )
-          .style("font-weight", (offset) =>
-            intervals.some((interval) =>
-              interval.contains(startTime.plus({ hours: offset }))
-            )
-              ? 700
-              : 400
-          )
-          .text((offset) =>
-            startTime
-              .plus({ hours: offset })
-              .setZone(timezoneNode.innerText)
-              .toFormat("HH")
-          );
-        // Exit…
-        td.exit().remove();
+      if (!timezones || timezones.length === 0) {
+        timezones.push("utc", myTimezone);
+      }
+      document.querySelector("input#🈁").value = JSON.stringify(timezones);
+
+      const intervals = JSON.parse(
+        new URL(window.location).searchParams.get("⧖") ?? "[]"
+      );
+      if (intervals.length === 0) {
+        intervals.push(
+          { "⧖": "2023-06-01T18:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-01T19:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-01T20:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-01T21:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-02T18:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-02T19:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-02T20:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-02T21:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-03T18:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-03T19:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-03T20:00:00/P7D", "🈁": "America/Toronto" },
+          { "⧖": "2023-06-03T21:00:00/P7D", "🈁": "America/Toronto" }
+        );
       }
 
-      // Update…
-      const dd = select("dl#intervals")
-        .selectAll("dd")
-        .data(intervals)
-        .text((interval) => interval);
-      // Enter…
-      dd.enter()
-        .append("dd")
-        .text((interval) => interval);
-      // Exit…
-      dd.exit().remove();
-      //]]>
+      document.querySelector("input#⧖").value = JSON.stringify(intervals);
+
+      const deltas = JSON.parse(
+        new URL(window.location).searchParams.get("Δ") ?? "[]"
+      );
+      if (deltas.length === 0) {
+        deltas.push("PT-604800S", "PT0S"); // -1week, +0week
+      }
+      document.querySelector("input#Δ").value = JSON.stringify(deltas);
+
+      const nearestInstantFromInterval = intervals.map((rawInterval) => {
+        const interval = Interval.fromISO(rawInterval["⧖"], {
+          zone: rawInterval["🈁"],
+        });
+        const intervalDuration = interval.toDuration();
+        let instant = interval.start;
+        let delta = now.diff(instant);
+        while (delta > 0) {
+          instant = instant.plus(intervalDuration);
+          delta = now.diff(instant);
+        }
+        return instant;
+      });
+      const instantsWithOffsets = nearestInstantFromInterval.flatMap(
+        (instant) =>
+          deltas.map((offset) => instant.plus(Duration.fromISO(offset)))
+      );
+      instantsWithOffsets.push(now);
+      instantsWithOffsets.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+
+      const monthHeader = document.querySelector("thead tr.month");
+      const dayHeader = document.querySelector("thead tr.day");
+      for (let i = 0; i < instantsWithOffsets.length; i++) {
+        const ths = [
+          document.createElement("th"),
+          document.createElement("th"),
+        ];
+        const abbrs = [
+          document.createElement("abbr"),
+          document.createElement("abbr"),
+        ];
+        abbrs[0].title = abbrs[1].title =
+          instantsWithOffsets[i].toISO() +
+          "\n" +
+          instantsWithOffsets[i].toRelative({
+            unit: ["hours", "minutes", "seconds"],
+          });
+        if (instantsWithOffsets[i] === now) {
+          abbrs[0].textContent = `⎀ ${instantsWithOffsets[i].month}`;
+          abbrs[1].textContent = `⎀ ${instantsWithOffsets[i].day}`;
+        } else {
+          abbrs[0].textContent = instantsWithOffsets[i].month;
+          abbrs[1].textContent = instantsWithOffsets[i].day;
+        }
+        ths[0].appendChild(abbrs[0]);
+        ths[1].appendChild(abbrs[1]);
+        monthHeader.appendChild(ths[0]);
+        dayHeader.appendChild(ths[1]);
+      }
+
+      const tableData = timezones.map((tz) => [
+        { text: tz === myTimezone ? `⎀ ${myTimezone}` : tz },
+        ...instantsWithOffsets.map((i) => ({
+          text: i.setZone(tz).toFormat("HH"),
+          title:
+            i.setZone(tz).toISO() +
+            "\n" +
+            i.toRelative({ unit: ["hours", "minutes", "seconds"] }),
+          background: interpolateCividis(
+            Math.sin((i.setZone(tz).hour * Math.PI) / 24)
+          ),
+          color: interpolateCividis(
+            Math.sin((((i.setZone(tz).hour + 9) % 24) * Math.PI) / 24)
+          ),
+        })),
+      ]);
+
+      const rows = select("tbody")
+        .selectAll("tr")
+        .data(tableData)
+        .join("tr")
+        .selectAll("td")
+        .data((row) => row)
+        .join("td")
+        .style("background", (d) => d.background)
+        .style("color", (d) => d.color)
+        .append("abbr")
+        .text((d) => d.text)
+        .attr("title", (d) => d.title);
     </script>
   </body>
 </html>

@@ -2,9 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>
-      FINAL FANTASY XIV, The Lodestone Interval to Discord timestamp
-    </title>
+    <title>FINAL FANTASY XIV, The Lodestone Interval Parser</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="mobile-web-app-capable" content="yes" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -14,48 +12,57 @@
       crossorigin="anonymous"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap"
       rel="stylesheet"
     />
     <style type="text/css">
       /*<![CDATA[*/
-      input,
-      textarea {
-        width: 90%;
+      body {
+        margin: 16px;
       }
 
-      .sourceCodeProCapsize {
-        font-family: "Source Code Pro", monospace;
-        font-size: 24.2424px;
+      input,
+      textarea {
+        width: 100%;
+      }
+
+      .merriweatherCapsize {
+        font-family: "Merriweather", monospace;
+        font-size: 21.5343px;
         line-height: 24px;
       }
 
-      .sourceCodeProCapsize::before {
+      .merriweatherCapsize::before {
         content: "";
-        margin-bottom: -0.1905em;
+        margin-bottom: -0.1698em;
         display: table;
       }
 
-      .sourceCodeProCapsize::after {
+      .merriweatherCapsize::after {
         content: "";
-        margin-top: -0.1395em;
+        margin-top: -0.2018em;
         display: table;
+      }
+
+      textarea.merriweatherCapsize {
+        padding-bottom: -0.1698em;
+        padding-top: -0.2018em;
       }
       /*]]>*/
     </style>
   </head>
   <body>
     <form>
-      <label class="sourceCodeProCapsize"
-        ><i>FINAL FANTASY XIV, The Lodestone</i> interval:<br /><input
+      <label class="merriweatherCapsize"
+        >FINAL FANTASY XIV, The Lodestone:<br /><input
           type="text"
           name="lodestoneTime"
           id="lodestoneTime"
-          class="sourceCodeProCapsize"
+          class="merriweatherCapsize"
           value=""
       /></label>
     </form>
-    <p class="sourceCodeProCapsize">
+    <p class="merriweatherCapsize">
       Example <i>FINAL FANTASY XIV, The Lodestone</i> interval:<br /><small
         >Sep. 12, 2022 7:00 p.m. to Sep. 13, 2022 3:00 a.m. (PDT)<br />Aug. 2,
         2022 8:00 p.m. to 10:00 p.m. (PDT)<br />Sep. 14, 2022 at 10:00 p.m. to
@@ -63,15 +70,15 @@
       >
     </p>
     <form>
-      <label class="sourceCodeProCapsize"
-        ><i>Discord</i> interval:<br /><textarea
+      <label class="merriweatherCapsize"
+        >Discord interval:<br /><textarea
           name="discordTime"
           id="discordTime"
-          class="sourceCodeProCapsize"
+          class="merriweatherCapsize"
         ></textarea>
       </label>
     </form>
-    <p class="sourceCodeProCapsize">
+    <p class="merriweatherCapsize">
       ©2010 - 2022 <b>SQUARE ENIX</b> CO., LTD. All Rights Reserved.<br />FINAL
       FANTASY, FINAL FANTASY XIV, FFXIV, SQUARE ENIX, and the SQUARE ENIX logo
       are registered trademarks or trademarks of Square Enix Holdings Co., Ltd.
@@ -144,11 +151,14 @@
       }
 
       const matches = [
+        // @see https://na.finalfantasyxiv.com/lodestone/news/detail/be8e150f33aefa87dc565dac754f846602ec0980
         // Sep. 12, 2022 7:00 p.m. to Sep. 13, 2022 3:00 a.m. (PDT)
         ...lodestoneTimeInput.value.matchAll(
           /([A-Z][a-z]{2}\.|[A-Z][a-z]{2,8}) (\d{1,2}), (\d{4}) (?:at )?(\d{1,2}):(\d\d) ([ap]\.m\.)/g
         ),
+        // @see https://na.finalfantasyxiv.com/lodestone/news/detail/63c334a3d79fc001ff1defb7b1e8b37f3143468a
         // Aug. 2, 2022 8:00 p.m. to 10:00 p.m. (PDT)
+        // @see https://na.finalfantasyxiv.com/lodestone/news/detail/7239a5ba4258181f5e61c065b23d53459f9ca851
         // Sep. 14, 2022 at 10:00 p.m. to 10:15 p.m. (PDT)
         ...lodestoneTimeInput.value.matchAll(
           /([A-Z][a-z]{2}\.|[A-Z][a-z]{2,8}) (\d{1,2}), (\d{4}) (?:at )?\d{1,2}:\d\d [ap]\.m\. to (\d{1,2}):(\d\d) ([ap]\.m\.)/g

@@ -12,28 +12,54 @@
       crossorigin="anonymous"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap"
       rel="stylesheet"
     />
     <style type="text/css">
       /*<![CDATA[*/
-      p {
-        font-family: "Source Code Pro", monospace;
+      body {
+        margin: 16px;
+      }
+
+      .merriweatherCapsize {
+        font-family: "Merriweather", monospace;
+        font-size: 21.5343px;
+        line-height: 24px;
+      }
+
+      .merriweatherCapsize::before {
+        content: "";
+        margin-bottom: -0.1698em;
+        display: table;
+      }
+
+      .merriweatherCapsize::after {
+        content: "";
+        margin-top: -0.2018em;
+        display: table;
       }
       /*]]>*/
     </style>
   </head>
   <body>
-    <p><a href="graphql/index.html">/graphql/ tools</a></p>
-    <p><a href="timezone/index.html">/timezone/ table</a></p>
-    <p>
-      <a href="lodestone_to_discord_interval/index.html"
-        >/lodestone_to_discord_interval/ FINAL FANTASY XIV, The Lodestone
-        Interval to Discord timestamp</a
+    <p class="merriweatherCapsize">
+      <a href="graphql/index.html">/graphql/ tools</a>
+    </p>
+    <p class="merriweatherCapsize">
+      <a href="jwt/index.html">/jwt/ tools</a>
+    </p>
+    <p class="merriweatherCapsize">
+      <a href="timezone/index.html">/timezone/ table</a>
+    </p>
+    <p class="merriweatherCapsize">
+      <a href="lodestone_interval_parser/index.html"
+        >FINAL FANTASY XIV, The /lodestone_interval_parser/</a
       >
     </p>
-    <p><a href="yaml/index.html">/yaml/ tools</a></p>
-    <p>
+    <p class="merriweatherCapsize">
+      <a href="yaml/index.html">/yaml/ tools</a>
+    </p>
+    <p class="merriweatherCapsize">
       ©2010 - 2022 <b>SQUARE ENIX</b> CO., LTD. All Rights Reserved.<br />FINAL
       FANTASY, FINAL FANTASY XIV, FFXIV, SQUARE ENIX, and the SQUARE ENIX logo
       are registered trademarks or trademarks of Square Enix Holdings Co., Ltd.
