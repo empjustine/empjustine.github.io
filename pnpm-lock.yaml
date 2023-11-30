@@ -1,33 +1,38 @@
-lockfileVersion: 5.4
+lockfileVersion: '6.0'
 
-specifiers:
-  '@capsizecss/core': ^3.1.1
-  '@capsizecss/metrics': ^1.2.0
-  prettier: ^2.8.8
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 devDependencies:
-  '@capsizecss/core': 3.1.1
-  '@capsizecss/metrics': 1.2.0
-  prettier: 2.8.8
+  '@capsizecss/core':
+    specifier: ^3.1.1
+    version: 3.1.1
+  '@capsizecss/metrics':
+    specifier: ^1.2.0
+    version: 1.2.0
+  prettier:
+    specifier: ^3.1.0
+    version: 3.1.0
 
 packages:
 
-  /@capsizecss/core/3.1.1:
+  /@capsizecss/core@3.1.1:
     resolution: {integrity: sha512-1YxfErFXdxcyDyc8peDwH2hiJF5U8sBY5i5HX0f/tpvabbu40w9r8VHYMOOw9Fox5O/+kf2gAhyfVe+sLnaaBA==}
     dependencies:
       csstype: 3.1.2
     dev: true
 
-  /@capsizecss/metrics/1.2.0:
+  /@capsizecss/metrics@1.2.0:
     resolution: {integrity: sha512-zUYcqaR0rv4TYXyY97G1vRMMOyz+3EteXqLsM1XO/N8LnThwR1wYSE5cU15CUx3KPAiAEIbUZ13B7+plxYjHUA==}
     dev: true
 
-  /csstype/3.1.2:
+  /csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
     dev: true
 
-  /prettier/2.8.8:
-    resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
-    engines: {node: '>=10.13.0'}
+  /prettier@3.1.0:
+    resolution: {integrity: sha512-TQLvXjq5IAibjh8EpBIkNKxO749UEWABoiIZehEPiY4GNpVdhaFKqSTu+QrlU6D2dPAfubRmtJTi4K4YkQ5eXw==}
+    engines: {node: '>=14'}
     hasBin: true
     dev: true

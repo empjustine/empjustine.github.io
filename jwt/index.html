@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -84,7 +84,7 @@ e30.e30.e30</textarea
       const outputAnalysis = document.querySelector("textarea#outputAnalysis");
       const outputInflate = document.querySelector("textarea#outputInflate");
       const outputInflateAnalysis = document.querySelector(
-        "textarea#outputInflateAnalysis"
+        "textarea#outputInflateAnalysis",
       );
       const outputDeflate = document.querySelector("textarea#outputDeflate");
 
@@ -101,7 +101,7 @@ e30.e30.e30</textarea
             stack: err.stack?.split("\n"),
           },
           null,
-          2
+          2,
         );
       }
 
@@ -125,7 +125,7 @@ e30.e30.e30</textarea
           const jwtNewClaims = base64url.encode(
             inflate(base64url.decode(jwtRawClaims), {
               to: "string",
-            })
+            }),
           );
           outputInflate.value = `${jwtHeader}.${jwtNewClaims}.${jwtSignature}`;
         } catch (err) {
@@ -146,7 +146,7 @@ e30.e30.e30</textarea
           const jwtNewClaims = base64url.encode(
             deflate(base64url.decode(jwtRawClaims), {
               to: "string",
-            })
+            }),
           );
           outputDeflate.value = `${jwtHeader}.${jwtNewClaims}.${jwtSignature}`;
         } catch (err) {

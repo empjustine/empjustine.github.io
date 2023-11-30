@@ -1,0 +1,75 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Punycode Toolbox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/css">
+      /*<![CDATA[*/
+      body {
+        margin: 0;
+      }
+      textarea {
+        width: 99.99%;
+        resize: vertical;
+      }
+      /*]]>*/
+    </style>
+  </head>
+  <body>
+    <div class="grid">
+      <label>
+        Punycode:
+        <textarea name="punycode" id="punycode"></textarea>
+      </label>
+      <label>
+        Raw:
+        <textarea name="raw" id="raw"></textarea>
+      </label>
+      <label>
+        err:
+        <textarea name="err" id="err"></textarea>
+      </label>
+    </div>
+    <script type="module">
+      //<![CDATA[
+      import * as punycode from "https://cdn.skypack.dev/pin/punycode@v2.3.1-Uc6fJhfzuXzya05fSvWt/mode=imports/optimized/punycode.js";
+
+      const punycodeTextarea = document.querySelector("textarea#punycode");
+      const rawTextarea = document.querySelector("textarea#raw");
+      const err = document.querySelector("textarea#err");
+
+      function punycodeChange() {
+        try {
+          rawTextarea.value = punycode.decode(punycodeTextarea.value);
+        } catch (e) {
+          err.value = e;
+        }
+      }
+      function rawChange() {
+        try {
+          punycodeTextarea.value = punycode.encode(rawTextarea.value);
+        } catch (e) {
+          err.value = `${e}\n${e?.stack}`;
+        }
+      }
+
+      punycodeTextarea.addEventListener("change", punycodeChange);
+      punycodeTextarea.addEventListener("keyup", punycodeChange);
+      rawTextarea.addEventListener("change", rawChange);
+      rawTextarea.addEventListener("keyup", rawChange);
+      //]]>
+    </script>
+  </body>
+</html>

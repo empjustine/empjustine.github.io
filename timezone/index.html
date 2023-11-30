@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -26,7 +26,11 @@
         border: 1px solid;
       }
       td {
-        text-shadow: 0 0 1px white, 0 0 1px white, 0 0 1px white, 0 0 1px white;
+        text-shadow:
+          0 0 1px white,
+          0 0 1px white,
+          0 0 1px white,
+          0 0 1px white;
         text-align: center;
       }
       /*]]>*/
@@ -155,7 +159,7 @@
       document.querySelector("input#now").value = now.toISO();
 
       const timezones = JSON.parse(
-        new URL(window.location).searchParams.get("🈁") ?? "[]"
+        new URL(window.location).searchParams.get("🈁") ?? "[]",
       );
       if (!timezones || timezones.length === 0) {
         timezones.push("utc", myTimezone);
@@ -163,7 +167,7 @@
       document.querySelector("input#🈁").value = JSON.stringify(timezones);
 
       const intervals = JSON.parse(
-        new URL(window.location).searchParams.get("⧖") ?? "[]"
+        new URL(window.location).searchParams.get("⧖") ?? "[]",
       );
       if (intervals.length === 0) {
         intervals.push(
@@ -178,14 +182,14 @@
           { "⧖": "2023-06-03T18:00:00/P7D", "🈁": "America/Toronto" },
           { "⧖": "2023-06-03T19:00:00/P7D", "🈁": "America/Toronto" },
           { "⧖": "2023-06-03T20:00:00/P7D", "🈁": "America/Toronto" },
-          { "⧖": "2023-06-03T21:00:00/P7D", "🈁": "America/Toronto" }
+          { "⧖": "2023-06-03T21:00:00/P7D", "🈁": "America/Toronto" },
         );
       }
 
       document.querySelector("input#⧖").value = JSON.stringify(intervals);
 
       const deltas = JSON.parse(
-        new URL(window.location).searchParams.get("Δ") ?? "[]"
+        new URL(window.location).searchParams.get("Δ") ?? "[]",
       );
       if (deltas.length === 0) {
         deltas.push("PT-604800S", "PT0S"); // -1week, +0week
@@ -207,7 +211,7 @@
       });
       const instantsWithOffsets = nearestInstantFromInterval.flatMap(
         (instant) =>
-          deltas.map((offset) => instant.plus(Duration.fromISO(offset)))
+          deltas.map((offset) => instant.plus(Duration.fromISO(offset))),
       );
       instantsWithOffsets.push(now);
       instantsWithOffsets.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
@@ -251,10 +255,10 @@
             "\n" +
             i.toRelative({ unit: ["hours", "minutes", "seconds"] }),
           background: interpolateCividis(
-            Math.sin((i.setZone(tz).hour * Math.PI) / 24)
+            Math.sin((i.setZone(tz).hour * Math.PI) / 24),
           ),
           color: interpolateCividis(
-            Math.sin((((i.setZone(tz).hour + 9) % 24) * Math.PI) / 24)
+            Math.sin((((i.setZone(tz).hour + 9) % 24) * Math.PI) / 24),
           ),
         })),
       ]);

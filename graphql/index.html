@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -101,10 +101,10 @@
       handleGraphql();
 
       const introspectionQueryJsonResult = document.querySelector(
-        "textarea.introspectionQueryJsonResult"
+        "textarea.introspectionQueryJsonResult",
       );
       const graphQLSchemaOutput = document.querySelector(
-        "textarea.graphQLSchemaOutput"
+        "textarea.graphQLSchemaOutput",
       );
 
       function jsonSchemaToGraphqlSchema() {
@@ -120,11 +120,11 @@
 
       introspectionQueryJsonResult.addEventListener(
         "change",
-        jsonSchemaToGraphqlSchema
+        jsonSchemaToGraphqlSchema,
       );
       introspectionQueryJsonResult.addEventListener(
         "keyup",
-        jsonSchemaToGraphqlSchema
+        jsonSchemaToGraphqlSchema,
       );
       //]]>
     </script>

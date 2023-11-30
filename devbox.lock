@@ -1,0 +1,15 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "biome@latest": {
+      "last_modified": "2023-11-19T09:25:46Z",
+      "resolved": "github:NixOS/nixpkgs/53aeb5c67b78a1bb565467043b79c3948afacbc9#biome",
+      "version": "1.3.3"
+    },
+    "nodejs@20": {
+      "last_modified": "2023-11-24T11:02:37Z",
+      "resolved": "github:NixOS/nixpkgs/068bacb9b6fbee6a603d1b1f68d7cf032c4feed1#nodejs_20",
+      "version": "20.10.0"
+    }
+  }
+}

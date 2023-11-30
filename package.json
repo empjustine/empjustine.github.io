@@ -1,7 +1,6 @@
 {
   "engines": {
-    "node": "18.16.1",
-    "pnpm": "7.33.1"
+    "node": "20.10.0"
   },
   "scripts": {
     "format": "prettier . --write"
@@ -9,6 +8,6 @@
   "devDependencies": {
     "@capsizecss/core": "^3.1.1",
     "@capsizecss/metrics": "^1.2.0",
-    "prettier": "^2.8.8"
+    "prettier": "^3.1.0"
   }
 }
