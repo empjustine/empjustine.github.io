@@ -1,0 +1,41 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Leaflet test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <style type="text/css">/*<![CDATA[*/ body { margin: 16px; } #map { height: 99vh; }/*]]>*/</style>
+  </head>
+  <body><div id="map"></div></body>
+  <script type="module">
+    //import leaflet from 'https://cdn.skypack.dev/leaflet';
+    import leaflet from 'https://cdn.skypack.dev/pin/leaflet@v1.9.4-6UGtTH7qaitceNeh7DaS/mode=imports/optimized/leaflet.js';
+
+    let position;
+    try {
+        position = await new Promise((resolve, reject) => {
+          try{
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          } catch (err) {
+            reject(err);
+          }
+        });
+        position = [position.coords.latitude, position.coords.longitude];
+    } catch (err) {
+      position = [-23.5944312000189, -46.68711694398726];
+    }
+    const map = leaflet.map('map').setView(position, 13);
+
+    leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    leaflet.marker([-23.5944312000189, -46.68711694398726]).addTo(map);
+  </script>
+</html>
