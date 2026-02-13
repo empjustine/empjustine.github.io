@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563eb">
+    <title>Barcode Scanner PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .scanner-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto 20px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #video {
+            width: 100%;
+            display: block;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .status {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .status.scanning {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .barcodes-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .barcode-item {
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #2563eb;
+        }
+
+        .barcode-info {
+            flex: 1;
+        }
+
+        .barcode-value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .barcode-format {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .barcode-time {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .remove-btn {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            background: #ef4444;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            opacity: 0.3;
+        }
+
+        .install-prompt {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            color: #92400e;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        .install-prompt button {
+            margin-top: 10px;
+            background: #f59e0b;
+            color: white;
+        }
+
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📱 Barcode Scanner</h1>
+            <p class="subtitle">Scan barcodes with your camera or upload images</p>
+        </header>
+
+        <div id="httpsWarning" class="install-prompt" style="background: #fee2e2; border-color: #ef4444; color: #991b1b; display: none;">
+            <strong>⚠️ Camera Unavailable</strong>
+            <p>Camera access requires HTTPS. You can still upload images to scan barcodes, or access this page via a secure connection (https://).</p>
+        </div>
+
+        <div id="installPrompt" class="install-prompt">
+            <strong>Install this app!</strong>
+            <p>Add to your home screen for easy access.</p>
+            <button onclick="installApp()" class="btn-primary">Install</button>
+        </div>
+
+        <div class="card">
+            <div id="status" class="status scanning" style="display: none;">
+                Ready to scan
+            </div>
+
+            <div class="scanner-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <div class="controls">
+                <button id="startBtn" class="btn-primary" onclick="startCamera()">
+                    📷 Start Camera
+                </button>
+                <button id="stopBtn" class="btn-danger" onclick="stopCamera()" disabled>
+                    ⏹️ Stop Camera
+                </button>
+                <div class="file-input-wrapper">
+                    <button class="btn-secondary">
+                        🖼️ Upload Image
+                    </button>
+                    <input type="file" id="fileInput" accept="image/*" onchange="handleImageUpload(event)">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 16px;">Scanned Barcodes (<span id="count">0</span>)</h2>
+            
+            <div id="barcodesList" class="barcodes-list">
+                <div class="empty-state">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                    </svg>
+                    <p>No barcodes scanned yet</p>
+                    <p style="font-size: 0.875rem; margin-top: 8px;">Start the camera or upload an image to begin</p>
+                </div>
+            </div>
+
+            <div class="controls" id="actionButtons" style="display: none; margin-top: 20px;">
+                <button class="btn-primary" onclick="copyAllToClipboard()">
+                    📋 Copy All
+                </button>
+                <button class="btn-secondary" onclick="shareAll()" id="shareBtn">
+                    📤 Share
+                </button>
+                <button class="btn-danger" onclick="clearAll()">
+                    🗑️ Clear All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@zxing/library@0.20.0/umd/index.min.js"></script>
+    <script>
+        let codeReader;
+        let scanning = false;
+        let barcodes = [];
+        let deferredPrompt;
+
+        // PWA Install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('installPrompt').classList.remove('show');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        // Initialize barcode reader
+        function initializeReader() {
+            codeReader = new ZXing.BrowserMultiFormatReader();
+            console.log('ZXing code reader initialized');
+        }
+
+        // Start camera scanning
+        async function startCamera() {
+            if (!codeReader) {
+                initializeReader();
+            }
+
+            try {
+                showStatus('Requesting camera permission...', 'scanning');
+                
+                // First, explicitly request camera permission
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment' // Use back camera on mobile
+                    } 
+                });
+                
+                // Stop the test stream
+                stream.getTracks().forEach(track => track.stop());
+                
+                showStatus('Starting camera...', 'scanning');
+                const videoElement = document.getElementById('video');
+                
+                // Now start the barcode reader
+                await codeReader.decodeFromVideoDevice(undefined, videoElement, (result, err) => {
+                    if (result) {
+                        addBarcode(result);
+                    }
+                });
+
+                scanning = true;
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                showStatus('Camera active - Point at a barcode', 'scanning');
+            } catch (err) {
+                console.error('Camera error:', err);
+                let errorMsg = 'Camera access failed: ';
+                
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    errorMsg += 'Permission denied. Please allow camera access in your browser settings.';
+                } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                    errorMsg += 'No camera found on this device.';
+                } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                    errorMsg += 'Camera is already in use by another app.';
+                } else if (err.name === 'OverconstrainedError') {
+                    errorMsg += 'Camera constraints not satisfied.';
+                } else if (err.name === 'NotSupportedError') {
+                    errorMsg += 'HTTPS required. Camera only works on secure connections (https://) or localhost.';
+                } else if (err.name === 'TypeError') {
+                    errorMsg += 'Camera API not supported in this browser.';
+                } else {
+                    errorMsg += err.message || 'Unknown error';
+                }
+                
+                showStatus(errorMsg, 'error');
+                
+                // Show help message
+                setTimeout(() => {
+                    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+                        showStatus('⚠️ Camera requires HTTPS. Try uploading an image instead, or access via https://', 'error');
+                    }
+                }, 3000);
+            }
+        }
+
+        // Stop camera
+        function stopCamera() {
+            if (codeReader) {
+                codeReader.reset();
+                scanning = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                hideStatus();
+            }
+        }
+
+        // Handle image upload
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!codeReader) {
+                initializeReader();
+            }
+
+            showStatus('Processing image...', 'scanning');
+
+            try {
+                const result = await codeReader.decodeFromImageUrl(URL.createObjectURL(file));
+                addBarcode(result);
+                showStatus('Barcode found!', 'success');
+                setTimeout(hideStatus, 2000);
+            } catch (err) {
+                console.error('Decode error:', err);
+                showStatus('No barcode found in image', 'error');
+                setTimeout(hideStatus, 3000);
+            }
+
+            // Reset file input
+            event.target.value = '';
+        }
+
+        // Add barcode to collection
+        function addBarcode(result) {
+            const barcodeValue = result.text;
+            const format = result.format;
+
+            // Check for duplicates
+            const exists = barcodes.some(b => b.value === barcodeValue);
+            if (exists) {
+                showStatus('Duplicate barcode (already scanned)', 'error');
+                setTimeout(() => {
+                    if (scanning) {
+                        showStatus('Camera active - Point at a barcode', 'scanning');
+                    } else {
+                        hideStatus();
+                    }
+                }, 2000);
+                return;
+            }
+
+            const barcode = {
+                value: barcodeValue,
+                format: format,
+                timestamp: new Date().toLocaleString()
+            };
+
+            barcodes.push(barcode);
+            renderBarcodes();
+            
+            if (scanning) {
+                showStatus(`Scanned: ${barcodeValue}`, 'success');
+                setTimeout(() => {
+                    showStatus('Camera active - Point at a barcode', 'scanning');
+                }, 2000);
+            }
+        }
+
+        // Render barcode list
+        function renderBarcodes() {
+            const list = document.getElementById('barcodesList');
+            const count = document.getElementById('count');
+            const actions = document.getElementById('actionButtons');
+
+            count.textContent = barcodes.length;
+
+            if (barcodes.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                        </svg>
+                        <p>No barcodes scanned yet</p>
+                        <p style="font-size: 0.875rem; margin-top: 8px;">Start the camera or upload an image to begin</p>
+                    </div>
+                `;
+                actions.style.display = 'none';
+            } else {
+                list.innerHTML = barcodes.map((barcode, index) => `
+                    <div class="barcode-item">
+                        <div class="barcode-info">
+                            <div class="barcode-value">${barcode.value}</div>
+                            <div class="barcode-format">Format: ${barcode.format}</div>
+                            <div class="barcode-time">${barcode.timestamp}</div>
+                        </div>
+                        <button class="remove-btn" onclick="removeBarcode(${index})">Remove</button>
+                    </div>
+                `).join('');
+                actions.style.display = 'flex';
+
+                // Hide share button if not supported
+                if (!navigator.share) {
+                    document.getElementById('shareBtn').style.display = 'none';
+                }
+            }
+        }
+
+        // Remove individual barcode
+        function removeBarcode(index) {
+            barcodes.splice(index, 1);
+            renderBarcodes();
+        }
+
+        // Clear all barcodes
+        function clearAll() {
+            if (confirm('Clear all scanned barcodes?')) {
+                barcodes = [];
+                renderBarcodes();
+            }
+        }
+
+        // Copy all to clipboard
+        async function copyAllToClipboard() {
+            const text = barcodes.map(b => b.value).join('\n');
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                showStatus('Copied to clipboard!', 'success');
+                setTimeout(() => {
+                    if (scanning) {
+                        showStatus('Camera active - Point at a barcode', 'scanning');
+                    } else {
+                        hideStatus();
+                    }
+                }, 2000);
+            } catch (err) {
+                console.error('Copy failed:', err);
+                showStatus('Failed to copy to clipboard', 'error');
+                setTimeout(hideStatus, 3000);
+            }
+        }
+
+        // Share all barcodes
+        async function shareAll() {
+            const text = barcodes.map(b => `${b.value} (${b.format})`).join('\n');
+            
+            try {
+                await navigator.share({
+                    title: 'Scanned Barcodes',
+                    text: text
+                });
+            } catch (err) {
+                console.error('Share failed:', err);
+            }
+        }
+
+        // Status helpers
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+        }
+
+        function hideStatus() {
+            document.getElementById('status').style.display = 'none';
+        }
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            renderBarcodes();
+            
+            // Check if camera is available and show warning if not HTTPS
+            if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                document.getElementById('httpsWarning').style.display = 'block';
+                document.getElementById('startBtn').title = 'Camera requires HTTPS';
+            }
+            
+            // Check if camera is supported at all
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('startBtn').title = 'Camera not supported in this browser';
+                showStatus('Camera not supported. Please use image upload.', 'error');
+            }
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (codeReader) {
+                codeReader.reset();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "Barcode Scanner PWA",
+  "short_name": "Barcode Scanner",
+  "description": "Scan barcodes with camera or images",
+  "start_url": "./barcode-scanner.html",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%232563eb' width='512' height='512' rx='128'/%3E%3Cpath fill='white' d='M128 128h48v256h-48zM192 128h24v256h-24zM240 128h48v256h-48zM304 128h24v256h-24zM336 128h48v256h-48z'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "screenshots": []
+}
